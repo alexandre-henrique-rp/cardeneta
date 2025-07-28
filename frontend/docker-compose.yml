@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  api:
+    image: cardeneta_web
+    container_name: cardeneta_web
+    build: .
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - .env
+    networks:
+      - cardeneta
+
+networks:
+  cardeneta:
+    external: true
+    name: cardeneta
+     
