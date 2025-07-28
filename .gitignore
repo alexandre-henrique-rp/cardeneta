@@ -1,0 +1,19 @@
+
+# backend
+backend/dist
+backend/.env
+backend/generated/prisma
+backend/prisma/migrations
+backend/db/dev.db
+backend/dist
+backend/node_modules
+backend/build
+
+# frontend
+frontend/dist
+frontend/node_modules
+frontend/build
+frontend/.env
+frontend/.vscode
+frontend/.DS_Store
+frontend/.react-router/
