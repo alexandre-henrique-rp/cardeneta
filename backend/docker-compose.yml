@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  api:
+    image: api_image_gdc
+    container_name: api_gdc
+    restart: always
+    volumes:
+      - ./db/:/app/db
+      - ./files/:/app/files
+    environment:
+      - .env
+    networks:
+      - cardeneta
+
+networks:
+  cardeneta:
+    external: true
+    name: cardeneta
+     

@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  // output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String       @id @default(uuid())
+  email       String       @unique
+  name        String?
+  senha       String
+  senhaHash   String
+  avatar      String?
+  status      Boolean      @default(true)
+  atms        Atm[]
+  userWallets UserWallet[]
+  trash       Trash[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Wallet {
+  id          String       @id @default(uuid())
+  name        String?
+  atms        Atm[]
+  userWallets UserWallet[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Atm {
+  id          String   @id @default(uuid())
+  nome        String?
+  value       Float    @default(0)
+  type        TypeAtm  @default(Credito)
+  status      Boolean  @default(true)
+  statusPg    String?  
+  typePayment String?  
+  createdPg   DateTime?
+  paymentDueDate DateTime?
+  gps         Json?
+  timezone    String   @default("America/Sao_Paulo")
+  proofId     String?
+  proof       Proof?   @relation(fields: [proofId], references: [id])
+  walletId    String
+  wallet      Wallet   @relation(fields: [walletId], references: [id])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Proof {
+  id        String   @id @default(uuid())
+  fileName  String
+  locale    String
+  userId    String
+  mimeType  String
+  atms      Atm[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserWallet {
+  id        String   @id @default(uuid())
+  userId    String
+  walletId  String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wallet    Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, walletId])
+}
+
+model Trash {
+  id        String   @id @default(uuid())
+  object    Json?
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum TypeAtm {
+  Credito
+  Debito
+}
