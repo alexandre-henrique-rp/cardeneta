@@ -34,16 +34,16 @@ if [ -z "$image_name" ]; then
 fi
 
 # verifica se a imagem existe se existir ele remove
-if sudo podman images | grep -q "$image_name"; then
+if sudo docker images | grep -q "$image_name"; then
     echo "✅ Imagem '$image_name' encontrada."
-    sudo podman stop "$container_name" || true
-    sudo podman rm "$container_name" || true
-    sudo podman rmi "$image_name"
+    sudo docker stop "$container_name" || true
+    sudo docker rm "$container_name" || true
+    sudo docker rmi "$image_name"
 fi
 
 # --- PARTE 2: SUBIR O CONTÊINER ---
-echo "⚙️  Subindo os serviços com 'podman-compose up -d --build'..."
-sudo podman-compose up -d --build
+echo "⚙️  Subindo os serviços com 'docker-compose up -d --build'..."
+sudo docker-compose up -d --build
 
 # --- PARTE 3: VERIFICAÇÃO DO LOG COM TIMEOUT ---
 echo "⏳ Aguardando a aplicação Nest iniciar... (procurando por '$SUCCESS_MESSAGE')"
@@ -53,11 +53,11 @@ echo "   Timeout: $TIMEOUT_SECONDS segundos."
 for i in $(seq 1 $TIMEOUT_SECONDS); do
     # Verifica os logs do contêiner. O 'grep -q' é silencioso e apenas retorna um status de sucesso/falha.
     # '2>/dev/null' suprime erros caso o contêiner demore um instante para criar o arquivo de log.
-    if sudo podman logs "$container_name" 2>/dev/null | grep -q "$SUCCESS_MESSAGE"; then
+    if sudo docker logs "$container_name" 2>/dev/null | grep -q "$SUCCESS_MESSAGE"; then
         echo "✅ Sucesso! A aplicação Nest está rodando."
         echo "--- Log de confirmação ---"
         # Mostra a linha de sucesso para confirmação visual
-        sudo podman logs "$container_name" 2>/dev/null | grep "$SUCCESS_MESSAGE"
+        sudo docker logs "$container_name" 2>/dev/null | grep "$SUCCESS_MESSAGE"
         echo "--------------------------"
         exit 0 # Termina o script com sucesso
     fi
@@ -71,6 +71,6 @@ echo "❌ Erro: Timeout de $TIMEOUT_SECONDS segundos atingido!"
 echo "   A mensagem '$SUCCESS_MESSAGE' não foi encontrada nos logs."
 echo "--- Últimos logs do contêiner '$container_name' para depuração ---"
 # Mostra os últimos logs para ajudar a identificar o problema
-sudo podman logs "$container_name" --tail 100
+sudo docker logs "$container_name" --tail 100
 echo "-------------------------------------------------"
 exit 1 # Termina o script com um código de erro

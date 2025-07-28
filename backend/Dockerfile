@@ -11,6 +11,8 @@ RUN npm install
 COPY . .
 
 RUN npx prisma generate
+# gerar o db
+RUN npx prisma db push
 
 RUN npm run build
 

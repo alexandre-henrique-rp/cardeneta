@@ -2,8 +2,9 @@ version: "3.8"
 
 services:
   api:
-    image: api_image_gdc
-    container_name: api_gdc
+    image: api_cardeneta
+    container_name: api_cardeneta
+    build: .
     restart: always
     volumes:
       - ./db/:/app/db
