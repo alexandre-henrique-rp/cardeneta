@@ -3,7 +3,6 @@ version: "3.8"
 services:
   api:
     image: cardeneta_web
-    container_name: cardeneta_web
     build: .
     restart: always
     ports:
