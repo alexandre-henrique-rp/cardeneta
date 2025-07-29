@@ -1,56 +1,38 @@
-# 1. Instalar dependências de desenvolvimento
-FROM node:22-alpine AS development-dependencies-env
+# 1. Instalar dependências e fazer o build
+FROM node:22-alpine AS builder
 WORKDIR /app
 
-# Configurações para melhorar a estabilidade do Yarn
+# Configura o Corepack e Yarn
 RUN corepack enable && \
-    yarn config set network-timeout 600000 -g && \
-    yarn config set network-concurrency 1 -g
-
-# Copia apenas os arquivos necessários para instalação
-COPY package.json yarn.lock ./
-
-# Instala as dependências com retry em caso de falha
-RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
-    yarn install --frozen-lockfile --network-timeout 600000 --network-concurrency 1
-
-# 2. Instalar só dependências de produção
-FROM node:22-alpine AS production-dependencies-env
-WORKDIR /app
-
-# Configurações para melhorar a estabilidade do Yarn
-RUN corepack enable && \
-    yarn config set network-timeout 600000 -g && \
-    yarn config set network-concurrency 1 -g
-
-# Copia apenas os arquivos necessários para instalação
-COPY package.json yarn.lock ./
-
-# Instala apenas as dependências de produção
-RUN --mount=type=cache,target=/usr/local/share/.cache/yarn \
-    yarn install --frozen-lockfile --production --network-timeout 600000 --network-concurrency 1
-
-# 3. Build da aplicação
-FROM node:22-alpine AS build-env
-WORKDIR /app
+    yarn config set network-timeout 600000 -g
 
 # Copia os arquivos necessários
-COPY --from=development-dependencies-env /app ./
+COPY package.json yarn.lock ./
 
-# Executa o build
+# Instala as dependências
+RUN yarn install --frozen-lockfile --network-timeout 600000
+
+# Copia o restante dos arquivos e faz o build
+COPY . .
 RUN yarn build
 
-# 4. Container final para produção
+# 2. Container final para produção
 FROM node:22-alpine
 WORKDIR /app
 
+# Configura o Corepack
+RUN corepack enable
+
 # Copia apenas o necessário para produção
 COPY package.json yarn.lock ./
-COPY --from=production-dependencies-env /app/node_modules ./node_modules
-COPY --from=build-env /app/build ./build
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/build ./build
+
+# Instala o servidor de arquivos estáticos
+RUN yarn global add serve
 
 # Expõe a porta 3000
 EXPOSE 3000
 
 # Define o comando de inicialização
-CMD ["yarn", "start"]
+CMD ["serve", "-s", "build", "-l", "3000"]
