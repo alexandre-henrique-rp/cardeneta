@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  backend:
+    image: api_cardeneta
+    build: ./backend
+    ports:
+      - "3030:3030"
+    restart: always
+    volumes:
+      - ./db/:/app/db
+      - ./files/:/app/files
+    networks:
+      - cardeneta
+    environment:
+      - DATABASE_URL=file:../db/dev.db
+      - PORT=3030
+      - JWT_SECRET=Pdo#ai13TypzSae2lxo2FryDqCogzQD==
+
+  frontend:
+    image: cardeneta_web
+    build: ./frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - cardeneta
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_URL=http://backend:3030
+
+networks:
+  cardeneta:
+    external: true
+    name: cardeneta
