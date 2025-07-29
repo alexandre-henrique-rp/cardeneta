@@ -3,6 +3,7 @@ version: "3.8"
 services:
   backend:
     image: api_cardeneta
+    container_name: api-cardeneta
     build: .
     restart: always
     volumes:
