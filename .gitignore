@@ -8,6 +8,10 @@ backend/db/dev.db
 backend/dist
 backend/node_modules
 backend/build
+backend/files
+backend/db
+backend/package-lock.json
+backend/yarn.lock
 
 # frontend
 frontend/dist
@@ -23,3 +27,8 @@ frontend/yarn.lock
 
 .windsurf
 .vscode
+frontend/.vscode
+backend/.vscode
+.vscode/settings.json
+db
+files
