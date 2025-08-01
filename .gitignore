@@ -17,3 +17,5 @@ frontend/.env
 frontend/.vscode
 frontend/.DS_Store
 frontend/.react-router/
+frontend/package-lock.json
+frontend/yarn.lock
