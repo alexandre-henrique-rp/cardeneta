@@ -1,22 +1,24 @@
-import { reactRouter } from "@react-router/dev/vite";
-import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { defineConfig } from 'vite'
+import viteReact from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+import { resolve } from 'node:path'
+
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
-  preview: {
-    port: 3000,
-    strictPort: true,
+  plugins: [
+    TanStackRouterVite({ autoCodeSplitting: true }),
+    viteReact(),
+    tailwindcss(),
+  ],
+  test: {
+    globals: true,
+    environment: 'jsdom',
   },
-  server: {
-    port: 3000,
-    strictPort: true,
-    host: true,
-    origin: "http://0.0.0.0:3000",
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+    },
   },
-  build: {
-    outDir: 'build',
-    emptyOutDir: true,
-  }
-});
+})
