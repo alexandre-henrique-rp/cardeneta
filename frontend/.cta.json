@@ -3,11 +3,12 @@
   "mode": "file-router",
   "typescript": true,
   "tailwind": true,
-  "packageManager": "yarn",
+  "packageManager": "npm",
   "git": true,
   "version": 1,
   "framework": "react-cra",
   "chosenAddOns": [
-    "biome"
+    "biome",
+    "shadcn"
   ]
 }

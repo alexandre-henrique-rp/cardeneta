@@ -10,7 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as privateRouteRouteImport } from './routes/(private)/route'
-import { Route as privateIndexRouteImport } from './routes/(private)/index'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as privateDashboardRouteImport } from './routes/(private)/dashboard'
 import { Route as PublicLoginIndexRouteImport } from './routes/_public/login/index'
 import { Route as PublicCadastroIndexRouteImport } from './routes/_public/cadastro/index'
 import { Route as privateLayoutNovoRegistroIndexRouteImport } from './routes/(private)/_layout/novo-registro/index'
@@ -21,9 +22,14 @@ const privateRouteRoute = privateRouteRouteImport.update({
   id: '/(private)',
   getParentRoute: () => rootRouteImport,
 } as any)
-const privateIndexRoute = privateIndexRouteImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const privateDashboardRoute = privateDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => privateRouteRoute,
 } as any)
 const PublicLoginIndexRoute = PublicLoginIndexRouteImport.update({
@@ -56,7 +62,8 @@ const privateLayoutContaIdIndexRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof privateIndexRoute
+  '/': typeof privateRouteRouteWithChildren
+  '/dashboard': typeof privateDashboardRoute
   '/cadastro': typeof PublicCadastroIndexRoute
   '/login': typeof PublicLoginIndexRoute
   '/configuracoes': typeof privateLayoutConfiguracoesIndexRoute
@@ -64,7 +71,8 @@ export interface FileRoutesByFullPath {
   '/conta/$id': typeof privateLayoutContaIdIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof privateIndexRoute
+  '/': typeof privateRouteRouteWithChildren
+  '/dashboard': typeof privateDashboardRoute
   '/cadastro': typeof PublicCadastroIndexRoute
   '/login': typeof PublicLoginIndexRoute
   '/configuracoes': typeof privateLayoutConfiguracoesIndexRoute
@@ -73,8 +81,9 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/(private)': typeof privateRouteRouteWithChildren
-  '/(private)/': typeof privateIndexRoute
+  '/(private)/dashboard': typeof privateDashboardRoute
   '/_public/cadastro/': typeof PublicCadastroIndexRoute
   '/_public/login/': typeof PublicLoginIndexRoute
   '/(private)/_layout/configuracoes/': typeof privateLayoutConfiguracoesIndexRoute
@@ -85,6 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/dashboard'
     | '/cadastro'
     | '/login'
     | '/configuracoes'
@@ -93,6 +103,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/dashboard'
     | '/cadastro'
     | '/login'
     | '/configuracoes'
@@ -100,8 +111,9 @@ export interface FileRouteTypes {
     | '/conta/$id'
   id:
     | '__root__'
+    | '/'
     | '/(private)'
-    | '/(private)/'
+    | '/(private)/dashboard'
     | '/_public/cadastro/'
     | '/_public/login/'
     | '/(private)/_layout/configuracoes/'
@@ -110,6 +122,7 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   privateRouteRoute: typeof privateRouteRouteWithChildren
   PublicCadastroIndexRoute: typeof PublicCadastroIndexRoute
   PublicLoginIndexRoute: typeof PublicLoginIndexRoute
@@ -124,11 +137,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(private)/': {
-      id: '/(private)/'
+    '/': {
+      id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof privateIndexRouteImport
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(private)/dashboard': {
+      id: '/(private)/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof privateDashboardRouteImport
       parentRoute: typeof privateRouteRoute
     }
     '/_public/login/': {
@@ -170,14 +190,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface privateRouteRouteChildren {
-  privateIndexRoute: typeof privateIndexRoute
+  privateDashboardRoute: typeof privateDashboardRoute
   privateLayoutConfiguracoesIndexRoute: typeof privateLayoutConfiguracoesIndexRoute
   privateLayoutNovoRegistroIndexRoute: typeof privateLayoutNovoRegistroIndexRoute
   privateLayoutContaIdIndexRoute: typeof privateLayoutContaIdIndexRoute
 }
 
 const privateRouteRouteChildren: privateRouteRouteChildren = {
-  privateIndexRoute: privateIndexRoute,
+  privateDashboardRoute: privateDashboardRoute,
   privateLayoutConfiguracoesIndexRoute: privateLayoutConfiguracoesIndexRoute,
   privateLayoutNovoRegistroIndexRoute: privateLayoutNovoRegistroIndexRoute,
   privateLayoutContaIdIndexRoute: privateLayoutContaIdIndexRoute,
@@ -188,6 +208,7 @@ const privateRouteRouteWithChildren = privateRouteRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   privateRouteRoute: privateRouteRouteWithChildren,
   PublicCadastroIndexRoute: PublicCadastroIndexRoute,
   PublicLoginIndexRoute: PublicLoginIndexRoute,

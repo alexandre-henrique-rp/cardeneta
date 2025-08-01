@@ -5,8 +5,8 @@ Welcome to your new TanStack app!
 To run this application:
 
 ```bash
-yarn install
-yarn run start  
+npm install
+npm run start  
 ```
 
 # Building For Production
@@ -14,7 +14,7 @@ yarn run start
 To build this application for production:
 
 ```bash
-yarn run build
+npm run build
 ```
 
 ## Testing
@@ -22,7 +22,7 @@ yarn run build
 This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
 
 ```bash
-yarn run test
+npm run test
 ```
 
 ## Styling
@@ -36,9 +36,18 @@ This project uses [Biome](https://biomejs.dev/) for linting and formatting. The 
 
 
 ```bash
-yarn run lint
-yarn run format
-yarn run check
+npm run lint
+npm run format
+npm run check
+```
+
+
+## Shadcn
+
+Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
+
+```bash
+pnpx shadcn@latest add button
 ```
 
 
@@ -145,7 +154,7 @@ React-Query is an excellent addition or alternative to route loading and integra
 First add your dependencies:
 
 ```bash
-yarn add @tanstack/react-query @tanstack/react-query-devtools
+npm install @tanstack/react-query @tanstack/react-query-devtools
 ```
 
 Next we'll need to create a query client and provider. We recommend putting those in `main.tsx`.
@@ -226,7 +235,7 @@ Another common requirement for React applications is state management. There are
 First you need to add TanStack Store as a dependency:
 
 ```bash
-yarn add @tanstack/store
+npm install @tanstack/store
 ```
 
 Now let's create a simple counter in the `src/App.tsx` file as a demonstration.

@@ -1,5 +1,6 @@
 import { LoginForm } from '@/components/login-form'
 import { createFileRoute } from '@tanstack/react-router'
+import { NotebookPenIcon } from 'lucide-react'
 
 export const Route = createFileRoute('/_public/login/')({
   component: Login,
@@ -10,8 +11,9 @@ function Login() {
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
-          <a href="#" className="flex items-center gap-2 font-medium">
-            <img src="/logo.png" alt="KingDevTec" className="w-16" />
+          <a href="#" className="flex items-center gap-1 font-medium">
+            <NotebookPenIcon className="w-8 h-8" />
+            <span className="text-2xl font-bold text-primary font-ubuntu">Cardeneta App</span>
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">

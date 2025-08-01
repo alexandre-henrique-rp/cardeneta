@@ -1,7 +1,7 @@
-import { FilePlus2, House, ServerCog } from 'lucide-react'
-import { NavMain } from '@/components/nav-main'
-import { NavSecondary } from '@/components/nav-secondary'
-import { NavUser } from '@/components/nav-user'
+import { ChartNoAxesCombinedIcon, FilePlus2, NotebookPenIcon, ServerCog } from "lucide-react";
+import { NavMain } from "@/components/nav-main";
+import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -9,35 +9,30 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
-} from '@/components/ui/sidebar'
+  SidebarMenuItem
+} from "@/components/ui/sidebar";
 
 const data = {
   navMain: [
     {
-      title: 'Home',
-      url: '/',
-      icon: House,
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: ChartNoAxesCombinedIcon
     },
     {
-      title: 'Novo Registro',
-      url: '/novo-registro',
-      icon: FilePlus2,
-    },
-    // {
-    //   title: "Relatório",
-    //   url: "/relatorio",
-    //   icon: Bot,
-    // },
+      title: "Novo Registro",
+      url: "/novo-registro",
+      icon: FilePlus2
+    }
   ],
   navSecondary: [
     {
-      title: 'Configurações',
-      url: '/configuracoes',
-      icon: ServerCog,
-    },
-  ],
-}
+      title: "Configurações",
+      url: "/configuracoes",
+      icon: ServerCog
+    }
+  ]
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -46,9 +41,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="/">
-                <div className="w-full flex aspect-square size-8 items-center justify-center">
-                  <img src="/logo.png" alt="KingDevTec" className="w-32" />
+              <a href="/dashboard">
+                <div className="w-full flex gap-1 items-center justify-center">
+                  <NotebookPenIcon className="w-7 h-7" />
+                  <span className="text-xl font-bold text-primary font-ubuntu">
+                    Cardeneta App
+                  </span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -63,5 +61,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavUser />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
