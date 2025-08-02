@@ -1,11 +1,24 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
 import logo from '../logo.svg'
+import Loading from '@/loading'
+import { useAuth } from '@/context/auth'
 
 export const Route = createFileRoute('/')({
   component: App,
 })
 
 function App() {
+  const { isAuthenticated, loading } = useAuth()
+  
+    if (loading) {
+      return <Loading />
+    }
+  
+    if (!isAuthenticated) {
+      return <Navigate to="/login" />
+    } else {
+      return <Navigate to="/dashboard" />
+    }
   return (
     <div className="text-center">
       <header className="min-h-screen flex flex-col items-center justify-center bg-[#282c34] text-white text-[calc(10px+2vmin)]">

@@ -12,10 +12,6 @@ services:
       - ./files/:/app/files
     networks:
       - cardeneta
-    environment:
-      - DATABASE_URL=file:../db/dev.db
-      - PORT=3030
-      - JWT_SECRET=Pdo#ai13TypzSae2lxo2FryDqCogzQD==
 
   frontend:
     image: cardeneta_web
@@ -27,8 +23,6 @@ services:
       - cardeneta
     depends_on:
       - backend
-    environment:
-      - VITE_API_URL=http://backend:3030
 
 networks:
   cardeneta:
