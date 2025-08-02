@@ -13,16 +13,16 @@ services:
     networks:
       - cardeneta
 
-  frontend:
-    image: cardeneta_web
-    build: ./frontend
-    restart: always
-    ports:
-      - "3000:3000"
-    networks:
-      - cardeneta
-    depends_on:
-      - backend
+  # frontend:
+  #   image: cardeneta_web
+  #   build: ./frontend
+  #   restart: always
+  #   ports:
+  #     - "3000:3000"
+  #   networks:
+  #     - cardeneta
+  #   depends_on:
+  #     - backend
 
 networks:
   cardeneta:
