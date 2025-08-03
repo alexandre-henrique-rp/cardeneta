@@ -22,8 +22,6 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: [
-      'contas.kingdevtec.com'
-    ]
-  },
+    allowedHosts: ['*']
+  }
 })

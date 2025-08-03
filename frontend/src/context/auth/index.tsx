@@ -117,7 +117,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         toast.error('Usuário desativado!')
       }
     } catch (error: any) {
-      toast.error(error || 'Erro ao fazer login')
+      toast.error(error?.message || 'Erro ao fazer login')
       throw error
     } finally {
       setLoading(false)
@@ -137,7 +137,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       )
       navigate({ to: '/login' })
     } catch (error: any) {
-      toast.error(error || 'Erro ao cadastrar')
+      toast.error(error?.message || 'Erro ao cadastrar')
       throw error
     } finally {
       setLoading(false)
@@ -153,7 +153,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(updatedUser)
       toast.success('Dados atualizados com sucesso!')
     } catch (error: any) {
-      toast.error(error || 'Erro ao atualizar dados')
+      toast.error(error?.message || 'Erro ao atualizar dados')
       throw error
     } finally {
       setLoading(false)
