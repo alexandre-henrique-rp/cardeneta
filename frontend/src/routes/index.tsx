@@ -16,7 +16,9 @@ function App() {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />
-  } else {
+  }
+
+  if (isAuthenticated) {
     return <Navigate to="/dashboard" />
   }
   return (
