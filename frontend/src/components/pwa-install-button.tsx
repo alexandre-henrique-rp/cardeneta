@@ -11,13 +11,13 @@ export function PWAInstallButton() {
   const handleInstall = async () => {
     setIsInstalling(true)
     const success = await installPWA()
-    
+
     if (success) {
       toast.success('App instalado com sucesso!')
     } else {
       toast.error('Falha na instalação do app')
     }
-    
+
     setIsInstalling(false)
   }
 

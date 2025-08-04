@@ -9,16 +9,16 @@ export const Route = createFileRoute('/')({
 
 function App() {
   const { isAuthenticated, loading } = useAuth()
-  
-    if (loading) {
-      return <Loading />
-    }
-  
-    if (!isAuthenticated) {
-      return <Navigate to="/login" />
-    } else {
-      return <Navigate to="/dashboard" />
-    }
+
+  if (loading) {
+    return <Loading />
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />
+  } else {
+    return <Navigate to="/dashboard" />
+  }
   return (
     <div className="text-center">
       <header className="min-h-screen flex flex-col items-center justify-center bg-[#282c34] text-white text-[calc(10px+2vmin)]">

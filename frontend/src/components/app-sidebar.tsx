@@ -1,7 +1,12 @@
-import { ChartNoAxesCombinedIcon, FilePlus2, NotebookPenIcon, ServerCog } from "lucide-react";
-import { NavMain } from "@/components/nav-main";
-import { NavSecondary } from "@/components/nav-secondary";
-import { NavUser } from "@/components/nav-user";
+import {
+  ChartNoAxesCombinedIcon,
+  FilePlus2,
+  NotebookPenIcon,
+  ServerCog,
+} from 'lucide-react'
+import { NavMain } from '@/components/nav-main'
+import { NavSecondary } from '@/components/nav-secondary'
+import { NavUser } from '@/components/nav-user'
 import {
   Sidebar,
   SidebarContent,
@@ -9,30 +14,30 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem
-} from "@/components/ui/sidebar";
+  SidebarMenuItem,
+} from '@/components/ui/sidebar'
 
 const data = {
   navMain: [
     {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: ChartNoAxesCombinedIcon
+      title: 'Dashboard',
+      url: '/dashboard',
+      icon: ChartNoAxesCombinedIcon,
     },
     {
-      title: "Novo Registro",
-      url: "/novo-registro",
-      icon: FilePlus2
-    }
+      title: 'Novo Registro',
+      url: '/novo-registro',
+      icon: FilePlus2,
+    },
   ],
   navSecondary: [
     {
-      title: "Configurações",
-      url: "/configuracoes",
-      icon: ServerCog
-    }
-  ]
-};
+      title: 'Configurações',
+      url: '/configuracoes',
+      icon: ServerCog,
+    },
+  ],
+}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -61,5 +66,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavUser />
       </SidebarFooter>
     </Sidebar>
-  );
+  )
 }

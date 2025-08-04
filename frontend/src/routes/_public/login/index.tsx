@@ -13,7 +13,9 @@ function Login() {
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-1 font-medium">
             <NotebookPenIcon className="w-8 h-8" />
-            <span className="text-2xl font-bold text-primary font-ubuntu">Cardeneta App</span>
+            <span className="text-2xl font-bold text-primary font-ubuntu">
+              Cardeneta App
+            </span>
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">
