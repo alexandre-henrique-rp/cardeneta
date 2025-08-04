@@ -4,7 +4,8 @@ import { RouterProvider, createRouter } from '@tanstack/react-router'
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
-
+// Registrar service worker
+import { registerSW } from 'virtual:pwa-register'
 import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 
@@ -24,6 +25,17 @@ declare module '@tanstack/react-router' {
     router: typeof router
   }
 }
+// Registrar o service worker
+const updateSW = registerSW({
+  onNeedRefresh() {
+    if (confirm('Nova versão disponível. Deseja atualizar?')) {
+      updateSW(true)
+    }
+  },
+  onOfflineReady() {
+    console.log('App pronto para funcionar offline')
+  },
+})
 
 // Render the app
 const rootElement = document.getElementById('app')

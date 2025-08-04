@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { PWAInstallButton, PWAInstallStatus } from './pwa-install-button'
 
 export default function Header() {
   return (
@@ -8,6 +9,10 @@ export default function Header() {
           <Link to="/">Home</Link>
         </div>
       </nav>
+      <div className="flex items-center gap-2">
+        <PWAInstallStatus />
+        <PWAInstallButton />
+      </div>
     </header>
   )
 }
