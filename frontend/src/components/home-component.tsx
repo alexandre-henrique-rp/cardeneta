@@ -13,6 +13,7 @@ interface ATM {
   type: string
   typePayment: string
   createdAt: string
+  statusPg?: string
 }
 
 interface FinancialData {

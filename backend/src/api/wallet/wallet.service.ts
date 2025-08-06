@@ -101,6 +101,7 @@ export class WalletService {
         value: atm.value,
         type: atm.type,
         typePayment: atm.typePayment,
+        statusPg: atm.statusPg || '',
         createdAt: atm.createdAt.toLocaleString('pt-BR', {
           day: '2-digit',
           month: '2-digit',

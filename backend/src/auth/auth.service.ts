@@ -55,7 +55,6 @@ export class AuthService {
         Wallets: userWallets,
       },
     };
-    console.log('🚀 ~ AuthService ~ login ~ DataRetorno:', DataRetorno);
 
     return DataRetorno;
   }

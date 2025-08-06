@@ -24,6 +24,7 @@ interface ATM {
   type: string
   typePayment: string
   createdAt: string
+  statusPg?: string
 }
 
 interface FinancialData {
@@ -62,6 +63,7 @@ export default function FinancialDataTable({ data }: { data: FinancialData }) {
             <TableHead className="w-[100px]">Data</TableHead>
             <TableHead>Descrição</TableHead>
             <TableHead>Método</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>ações</TableHead>
             <TableHead className="text-right">Valor</TableHead>
           </TableRow>
@@ -76,6 +78,7 @@ export default function FinancialDataTable({ data }: { data: FinancialData }) {
               <TableCell className="font-medium">{atm.createdAt}</TableCell>
               <TableCell>{atm.name}</TableCell>
               <TableCell>{atm.typePayment}</TableCell>
+              <TableCell>{atm.type === 'Debito' ? (atm.statusPg || '') : '-'}</TableCell>
               <TableCell className="flex gap-4">
                 <Tooltip>
                   <TooltipTrigger asChild>

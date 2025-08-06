@@ -95,6 +95,7 @@ const formSchema = z.object({
   typePayment: z.string().min(1, {
     message: 'Selecione um tipo de pagamento.',
   }),
+  statusPg: z.string().optional(),
 })
 
 interface AtmFormProps {
@@ -154,6 +155,7 @@ export function AtmForm({ mode, data }: AtmFormProps) {
       type: '',
       paymentDueDate: null,
       typePayment: '',
+      statusPg: '',
     },
   })
 
@@ -200,12 +202,14 @@ export function AtmForm({ mode, data }: AtmFormProps) {
             )
           : null,
         typePayment: data.typePayment || '',
+        statusPg: data.statusPg || '',
       })
 
       // Forçar atualização dos campos após reset
       setTimeout(() => {
         form.setValue('type', data.type || '')
         form.setValue('typePayment', data.typePayment || '')
+        form.setValue('statusPg', data.statusPg || '')
       }, 100)
 
       if (data.value) {
@@ -275,6 +279,7 @@ export function AtmForm({ mode, data }: AtmFormProps) {
           : undefined,
         gps: gpsLocation,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        statusPg: values.statusPg,
       }
 
       const api = ApiService()
@@ -504,6 +509,34 @@ export function AtmForm({ mode, data }: AtmFormProps) {
               </FormItem>
             )}
           />
+
+          {watchType === 'Debito' && (
+            <FormField
+              control={form.control}
+              name="statusPg"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status de Pagamento</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value || ''}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="PAGO">Pago</SelectItem>
+                      <SelectItem value="EM ABERTO">Em Aberto</SelectItem>
+                      <SelectItem value="PENDENTE">Pendente</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <div className="space-y-2">
             <label htmlFor="proof" className="text-sm font-medium">

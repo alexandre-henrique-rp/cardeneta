@@ -41,6 +41,7 @@ export class DebitService {
         type: true,
         userId: true,
         updatedAt: true,
+        statusPg: true,
       },
     });
     return debitos as DebitEntity[];

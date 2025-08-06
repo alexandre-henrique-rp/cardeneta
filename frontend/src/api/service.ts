@@ -124,6 +124,7 @@ export const ApiService = () => ({
     paymentDueDate?: Date
     gps: object
     timezone: string
+    statusPg?: string
   }) => {
     try {
       const response = await BaseApi.post('/debit', data)
@@ -160,6 +161,7 @@ export const ApiService = () => ({
       paymentDueDate?: Date
       gps?: object
       timezone?: string
+      statusPg?: string
     }
   ) => {
     try {
