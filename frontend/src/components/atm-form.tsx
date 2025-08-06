@@ -242,7 +242,7 @@ export function AtmForm({ mode, data }: AtmFormProps) {
 
     // Se não tem carteira salva ou ela não existe mais, usar a primeira
     if (!selectedWallet || !User?.Wallets?.some(w => w.id === selectedWallet)) {
-      walletId = User?.Wallets?.[0]?.id
+      walletId = User?.Wallets?.[0]?.id || null
     }
 
     if (!walletId) {
