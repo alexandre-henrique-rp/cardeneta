@@ -36,7 +36,8 @@ export default function FinancialDataTable({ data }: { data: FinancialData }) {
   const navigate = useNavigate()
   const api = ApiService()
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation()
     api
       .deleteAtm(id)
       .then(() => {
@@ -46,6 +47,11 @@ export default function FinancialDataTable({ data }: { data: FinancialData }) {
       .catch(error => {
         toast.error(error)
       })
+  }
+
+  const handleEdit = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    navigate({ to: `/conta/${id}` })
   }
 
   return (
@@ -77,7 +83,7 @@ export default function FinancialDataTable({ data }: { data: FinancialData }) {
                       type="button"
                       variant="outline"
                       size="icon"
-                      onClick={() => navigate({ to: `/conta/${atm.id}` })}
+                      onClick={(e) => handleEdit(atm.id, e)}
                     >
                       <Edit2 className="h-4 w-4" />
                     </Button>
@@ -93,7 +99,7 @@ export default function FinancialDataTable({ data }: { data: FinancialData }) {
                       type="button"
                       variant="outline"
                       size="icon"
-                      onClick={() => handleDelete(atm.id)}
+                      onClick={(e) => handleDelete(atm.id, e)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

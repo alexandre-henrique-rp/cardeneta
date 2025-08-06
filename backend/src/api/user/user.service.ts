@@ -71,6 +71,11 @@ export class UserService {
               },
             },
           },
+          orderBy: {
+            wallet: {
+              createdAt: 'asc',
+            },
+          },
         },
       },
     });

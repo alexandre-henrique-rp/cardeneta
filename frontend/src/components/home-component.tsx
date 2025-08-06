@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import DateFilter from './date-filter'
 import FinancialDataTable from './financial-data-table'
 import SummaryFooter from './summary-footer'
@@ -36,7 +36,7 @@ export default function HomeComponent() {
     setShowWalletModal(false)
   }
 
-  const handleDateChange = async (
+  const handleDateChange = useCallback(async (
     year: number,
     month: number,
     walletId: string
@@ -52,7 +52,7 @@ export default function HomeComponent() {
     } catch (error) {
       console.error('Erro ao buscar dados:', error)
     }
-  }
+  }, [])
 
   return (
     <>

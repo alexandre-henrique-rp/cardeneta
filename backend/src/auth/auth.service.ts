@@ -40,6 +40,9 @@ export class AuthService {
           },
         },
       },
+      orderBy: {
+        createdAt: 'asc',
+      },
     });
     const DataRetorno = {
       token,

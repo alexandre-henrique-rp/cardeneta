@@ -236,8 +236,17 @@ export function AtmForm({ mode, data }: AtmFormProps) {
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!User?.Wallets?.[0]?.id) {
-      toast.error('Nenhuma carteira encontrada')
+    // Obter carteira fixada do localStorage ou usar a primeira disponível
+    const selectedWallet = localStorage.getItem('selectedWallet')
+    let walletId = selectedWallet
+
+    // Se não tem carteira salva ou ela não existe mais, usar a primeira
+    if (!selectedWallet || !User?.Wallets?.some(w => w.id === selectedWallet)) {
+      walletId = User?.Wallets?.[0]?.id
+    }
+
+    if (!walletId) {
+      toast.error('Nenhuma carteira selecionada')
       return
     }
 
@@ -257,7 +266,7 @@ export function AtmForm({ mode, data }: AtmFormProps) {
       const payload = {
         nome: values.nome,
         value: values.value,
-        walletId: User.Wallets[0].id,
+        walletId: walletId,
         proofId,
         typePayment: values.typePayment,
         createdPg: values.createdPg.toDate(getLocalTimeZone()),

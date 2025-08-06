@@ -46,16 +46,43 @@ export class WalletService {
     // pegar o primeiro dia do mes e o ultimo dia do mes
     const startDate = new Date(ano, mes - 1, 1);
     const endDate = new Date(ano, mes, 0);
-    const carteira = await this.prisma.atm.findMany({
-      where: {
-        walletId: id,
-        // userId: user.id,
-        status: true,
-        createdAt: {
-          gte: startDate,
-          lte: endDate,
+
+    // Verificar se o usuário tem acesso à carteira (exceto para id "0" que busca todas as carteiras do usuário)
+    if (id !== '0') {
+      const hasAccess = await this.prisma.userWallet.findFirst({
+        where: {
+          walletId: id,
+          userId: user.id,
         },
-      },
+      });
+
+      if (!hasAccess) {
+        throw new Error('Usuário não tem acesso a esta carteira');
+      }
+    }
+
+    // Se id for "0", buscar ATMs de todas as carteiras do usuário
+    const whereCondition =
+      id === '0'
+        ? {
+            userId: user.id,
+            status: true,
+            createdAt: {
+              gte: startDate,
+              lte: endDate,
+            },
+          }
+        : {
+            walletId: id,
+            status: true,
+            createdAt: {
+              gte: startDate,
+              lte: endDate,
+            },
+          };
+
+    const carteira = await this.prisma.atm.findMany({
+      where: whereCondition,
     });
 
     const currentBalance = carteira.reduce((acc, atm) => {

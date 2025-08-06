@@ -86,10 +86,19 @@ export default function DateFilter({
 
   useEffect(() => {
     if (User?.Wallets) {
+      // Verificar se existe uma carteira salva no localStorage
+      const savedWallet = localStorage.getItem('selectedWallet')
+      
       if (User.Wallets.length === 1) {
         setWallet(User.Wallets[0].id)
       } else if (User.Wallets.length > 1) {
-        setWallet(User.Wallets[0].id)
+        // Se existe carteira salva e ela ainda está na lista de carteiras do usuário, usar ela
+        if (savedWallet && User.Wallets.some(w => w.id === savedWallet)) {
+          setWallet(savedWallet)
+        } else {
+          // Caso contrário, usar a primeira carteira (mais antiga)
+          setWallet(User.Wallets[0].id)
+        }
       }
     }
   }, [User])
@@ -98,7 +107,14 @@ export default function DateFilter({
     if (autoLoad && wallet) {
       onDateChange(year, month, wallet)
     }
-  }, [wallet, autoLoad, onDateChange, year, month])
+  }, [wallet, autoLoad, year, month])
+
+  // Salvar carteira selecionada quando ela mudar (exceto para carteira única)
+  useEffect(() => {
+    if (wallet && User?.Wallets && User.Wallets.length > 1) {
+      localStorage.setItem('selectedWallet', wallet)
+    }
+  }, [wallet, User?.Wallets])
 
   // Classe base para todos os controles de formulário
   const inputBaseClass =
@@ -124,7 +140,11 @@ export default function DateFilter({
             </label>
             <div className="flex gap-2 items-center w-[200px]">
               <div className="relative flex-1">
-                <Select value={wallet} onValueChange={setWallet}>
+                <Select value={wallet} onValueChange={(value) => {
+                  setWallet(value)
+                  // Salvar a carteira selecionada no localStorage quando o usuário trocar
+                  localStorage.setItem('selectedWallet', value)
+                }}>
                   <SelectTrigger className={inputBaseClass}>
                     <SelectValue placeholder="Selecione uma carteira" />
                   </SelectTrigger>
