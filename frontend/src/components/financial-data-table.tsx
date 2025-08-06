@@ -83,7 +83,7 @@ export default function FinancialDataTable({ data }: { data: FinancialData }) {
                       type="button"
                       variant="outline"
                       size="icon"
-                      onClick={(e) => handleEdit(atm.id, e)}
+                      onClick={e => handleEdit(atm.id, e)}
                     >
                       <Edit2 className="h-4 w-4" />
                     </Button>
@@ -99,7 +99,7 @@ export default function FinancialDataTable({ data }: { data: FinancialData }) {
                       type="button"
                       variant="outline"
                       size="icon"
-                      onClick={(e) => handleDelete(atm.id, e)}
+                      onClick={e => handleDelete(atm.id, e)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

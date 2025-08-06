@@ -88,7 +88,7 @@ export default function DateFilter({
     if (User?.Wallets) {
       // Verificar se existe uma carteira salva no localStorage
       const savedWallet = localStorage.getItem('selectedWallet')
-      
+
       if (User.Wallets.length === 1) {
         setWallet(User.Wallets[0].id)
       } else if (User.Wallets.length > 1) {
@@ -107,7 +107,7 @@ export default function DateFilter({
     if (autoLoad && wallet) {
       onDateChange(year, month, wallet)
     }
-  }, [wallet, autoLoad, year, month])
+  }, [wallet, autoLoad, year, month, onDateChange])
 
   // Salvar carteira selecionada quando ela mudar (exceto para carteira única)
   useEffect(() => {
@@ -140,11 +140,14 @@ export default function DateFilter({
             </label>
             <div className="flex gap-2 items-center w-[200px]">
               <div className="relative flex-1">
-                <Select value={wallet} onValueChange={(value) => {
-                  setWallet(value)
-                  // Salvar a carteira selecionada no localStorage quando o usuário trocar
-                  localStorage.setItem('selectedWallet', value)
-                }}>
+                <Select
+                  value={wallet}
+                  onValueChange={value => {
+                    setWallet(value)
+                    // Salvar a carteira selecionada no localStorage quando o usuário trocar
+                    localStorage.setItem('selectedWallet', value)
+                  }}
+                >
                   <SelectTrigger className={inputBaseClass}>
                     <SelectValue placeholder="Selecione uma carteira" />
                   </SelectTrigger>

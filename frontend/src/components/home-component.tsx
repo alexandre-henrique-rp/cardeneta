@@ -36,23 +36,22 @@ export default function HomeComponent() {
     setShowWalletModal(false)
   }
 
-  const handleDateChange = useCallback(async (
-    year: number,
-    month: number,
-    walletId: string
-  ) => {
-    try {
-      const api = ApiService()
-      const currentWallet = localStorage.getItem('currentWallet')
-      if (currentWallet !== walletId) {
-        localStorage.setItem('currentWallet', walletId)
+  const handleDateChange = useCallback(
+    async (year: number, month: number, walletId: string) => {
+      try {
+        const api = ApiService()
+        const currentWallet = localStorage.getItem('currentWallet')
+        if (currentWallet !== walletId) {
+          localStorage.setItem('currentWallet', walletId)
+        }
+        const data = await api.getWallet(month, year, walletId)
+        setData(data)
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error)
       }
-      const data = await api.getWallet(month, year, walletId)
-      setData(data)
-    } catch (error) {
-      console.error('Erro ao buscar dados:', error)
-    }
-  }, [])
+    },
+    []
+  )
 
   return (
     <>
