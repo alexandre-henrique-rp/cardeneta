@@ -49,7 +49,7 @@ export class WalletService {
     const carteira = await this.prisma.atm.findMany({
       where: {
         walletId: id,
-        userId: user.id,
+        // userId: user.id,
         status: true,
         createdAt: {
           gte: startDate,
