@@ -78,7 +78,9 @@ export default function FinancialDataTable({ data }: { data: FinancialData }) {
               <TableCell className="font-medium">{atm.createdAt}</TableCell>
               <TableCell>{atm.name}</TableCell>
               <TableCell>{atm.typePayment}</TableCell>
-              <TableCell>{atm.type === 'Debito' ? (atm.statusPg || '') : '-'}</TableCell>
+              <TableCell>
+                {atm.type === 'Debito' ? atm.statusPg || '' : '-'}
+              </TableCell>
               <TableCell className="flex gap-4">
                 <Tooltip>
                   <TooltipTrigger asChild>
