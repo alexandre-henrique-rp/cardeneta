@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { startRegistration, startAuthentication } from '@simplewebauthn/browser'
 import * as webAuthnApi from '@/api/webauthn'
 import type { User } from '@/context/auth'
@@ -18,12 +18,12 @@ export function useWebAuthn() {
    * Verifica se o aplicativo está rodando em modo PWA (standalone).
    * @returns {boolean} True se estiver em modo PWA.
    */
-  const isPwaMode = () => {
+  const isPwaMode = useCallback(() => {
     if (typeof window !== 'undefined') {
       return window.matchMedia('(display-mode: standalone)').matches
     }
     return false
-  }
+  }, [])
 
   /**
    * Inicia o processo de registro de uma nova credencial biométrica.
@@ -83,7 +83,9 @@ export function useWebAuthn() {
     isLoading,
     error,
     isPwaMode,
-    hasBiometricRegistration: () =>
-      !!localStorage.getItem(BIOMETRIC_REGISTERED_KEY),
+    hasBiometricRegistration: useCallback(
+    () => !!localStorage.getItem(BIOMETRIC_REGISTERED_KEY),
+    [],
+  ),
   }
 }
