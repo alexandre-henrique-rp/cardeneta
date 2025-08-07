@@ -32,14 +32,14 @@ const formSchema = z.object({
 type LoginFormProps = React.HTMLAttributes<HTMLDivElement>
 
 export function LoginForm({ className, ...props }: LoginFormProps) {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showBiometricButton, setShowBiometricButton] = useState(false);
-  const { login, loading, isAuthenticated, handleLoginSuccess } = useAuth();
-  const { 
-    login: loginWithBiometrics, 
-    isPwaMode, 
-    isLoading: isBiometricLoading 
-  } = useWebAuthn();
+  const [showPassword, setShowPassword] = useState(false)
+  const [showBiometricButton, setShowBiometricButton] = useState(false)
+  const { login, loading, isAuthenticated, handleLoginSuccess } = useAuth()
+  const {
+    login: loginWithBiometrics,
+    isPwaMode,
+    isLoading: isBiometricLoading,
+  } = useWebAuthn()
   // const Navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -53,9 +53,9 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   useEffect(() => {
     // Verifica se o PWA está instalado e se o navegador suporta WebAuthn
     if (isPwaMode() && window.PublicKeyCredential) {
-      setShowBiometricButton(true);
+      setShowBiometricButton(true)
     }
-  }, [isPwaMode]);
+  }, [isPwaMode])
 
   if (isAuthenticated) {
     // Navigate("/");
@@ -76,15 +76,15 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
   async function handleBiometricLogin() {
     try {
-      const loginData = await loginWithBiometrics();
+      const loginData = await loginWithBiometrics()
       if (loginData) {
-        handleLoginSuccess(loginData);
-        toast.success('Login biométrico realizado com sucesso!');
+        handleLoginSuccess(loginData)
+        toast.success('Login biométrico realizado com sucesso!')
       }
       // Se loginData for nulo, o hook useWebAuthn já tratou o erro.
     } catch (error) {
-      console.error('Erro no login biométrico:', error);
-      toast.error('Ocorreu um erro inesperado durante o login biométrico.');
+      console.error('Erro no login biométrico:', error)
+      toast.error('Ocorreu um erro inesperado durante o login biométrico.')
     }
   }
 
@@ -152,7 +152,11 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
             )}
           />
           <div className="flex flex-col gap-2">
-            <Button type="submit" className="w-full" disabled={loading || isBiometricLoading}>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loading || isBiometricLoading}
+            >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Entrar com E-mail
             </Button>

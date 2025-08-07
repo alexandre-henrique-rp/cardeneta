@@ -7,13 +7,13 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { useWebAuthn } from '@/hooks/useWebAuthn';
-import { toast } from 'sonner';
+} from '@/components/ui/alert-dialog'
+import { useWebAuthn } from '@/hooks/useWebAuthn'
+import { toast } from 'sonner'
 
 interface Props {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
 /**
@@ -21,18 +21,18 @@ interface Props {
  * Aparece após o primeiro login se o app for um PWA.
  */
 export function BiometricOnboardingDialog({ open, onOpenChange }: Props) {
-  const { register, isLoading, error } = useWebAuthn();
+  const { register, isLoading, error } = useWebAuthn()
 
   const handleRegister = async () => {
-    await register();
+    await register()
     // O hook já trata o erro, mas podemos verificar se houve sucesso
     if (!error) {
-      toast.success('Biometria ativada com sucesso!');
-      onOpenChange(false); // Fecha o dialog após o sucesso
+      toast.success('Biometria ativada com sucesso!')
+      onOpenChange(false) // Fecha o dialog após o sucesso
     } else {
-      toast.error('Não foi possível ativar a biometria.');
+      toast.error('Não foi possível ativar a biometria.')
     }
-  };
+  }
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -40,8 +40,8 @@ export function BiometricOnboardingDialog({ open, onOpenChange }: Props) {
         <AlertDialogHeader>
           <AlertDialogTitle>Login mais rápido?</AlertDialogTitle>
           <AlertDialogDescription>
-            Ative o login por biometria (Face ID, digital) para acessar sua conta
-            de forma segura e sem senhas neste dispositivo.
+            Ative o login por biometria (Face ID, digital) para acessar sua
+            conta de forma segura e sem senhas neste dispositivo.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -52,5 +52,5 @@ export function BiometricOnboardingDialog({ open, onOpenChange }: Props) {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }

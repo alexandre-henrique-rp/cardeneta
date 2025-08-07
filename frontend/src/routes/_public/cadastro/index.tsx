@@ -19,7 +19,7 @@ function RouteComponent() {
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-1 font-medium">
-          <img src="/logo.png" alt="CadernetaApp" className="w-40" />
+            <img src="/logo.png" alt="CadernetaApp" className="w-40" />
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">
