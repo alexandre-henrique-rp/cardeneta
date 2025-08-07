@@ -184,6 +184,9 @@ export function AtmForm({ mode, data }: AtmFormProps) {
 
       console.log('Dados recebidos:', data)
       console.log('Type:', data.type, 'TypePayment:', data.typePayment)
+      console.log('Chaves do objeto data:', Object.keys(data))
+      console.log('Tipo de typePayment:', typeof data.typePayment)
+      console.log('Valor de typePayment:', data.typePayment)
 
       form.reset({
         nome: data.nome || '',
@@ -210,7 +213,7 @@ export function AtmForm({ mode, data }: AtmFormProps) {
         form.setValue('type', data.type || '')
         form.setValue('typePayment', data.typePayment || '')
         form.setValue('statusPg', data.statusPg || '')
-      }, 100)
+      }, 200)
 
       if (data.value) {
         setCurrencyValue(formatCurrency(data.value))
@@ -490,7 +493,6 @@ export function AtmForm({ mode, data }: AtmFormProps) {
                 <Select
                   onValueChange={field.onChange}
                   value={field.value || ''}
-                  disabled={mode === 'edit'}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -498,11 +500,11 @@ export function AtmForm({ mode, data }: AtmFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="dinheiro">Dinheiro</SelectItem>
-                    <SelectItem value="cartão">Cartão</SelectItem>
-                    <SelectItem value="pix">PIX</SelectItem>
-                    <SelectItem value="boleto">Boleto</SelectItem>
-                    <SelectItem value="transferência">Transferência</SelectItem>
+                    <SelectItem value="Dinheiro">Dinheiro</SelectItem>
+                    <SelectItem value="Cartão">Cartão</SelectItem>
+                    <SelectItem value="PIX">PIX</SelectItem>
+                    <SelectItem value="Boleto">Boleto</SelectItem>
+                    <SelectItem value="Transferência">Transferência</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -519,7 +521,7 @@ export function AtmForm({ mode, data }: AtmFormProps) {
                   <FormLabel>Status de Pagamento</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    value={field.value || ''}
+                    value={field.value || 'EM ABERTO'}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -527,8 +529,8 @@ export function AtmForm({ mode, data }: AtmFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="PAGO">Pago</SelectItem>
                       <SelectItem value="EM ABERTO">Em Aberto</SelectItem>
+                      <SelectItem value="PAGO">Pago</SelectItem>
                       <SelectItem value="PENDENTE">Pendente</SelectItem>
                     </SelectContent>
                   </Select>

@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
-import { useState } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Eye, EyeOff, Fingerprint } from 'lucide-react'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from './ui/button'
@@ -16,6 +16,7 @@ import { Input } from './ui/input'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
 import { useAuth } from '@/context/auth'
+import { useWebAuthn } from '@/hooks/useWebAuthn'
 import { cn } from '@/lib/utils'
 // import { useNavigate } from "react-router";
 
@@ -31,8 +32,14 @@ const formSchema = z.object({
 type LoginFormProps = React.HTMLAttributes<HTMLDivElement>
 
 export function LoginForm({ className, ...props }: LoginFormProps) {
-  const [showPassword, setShowPassword] = useState(false)
-  const { login, loading, isAuthenticated } = useAuth()
+  const [showPassword, setShowPassword] = useState(false);
+  const [showBiometricButton, setShowBiometricButton] = useState(false);
+  const { login, loading, isAuthenticated, handleLoginSuccess } = useAuth();
+  const { 
+    login: loginWithBiometrics, 
+    isPwaMode, 
+    isLoading: isBiometricLoading 
+  } = useWebAuthn();
   // const Navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -42,6 +49,13 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
       password: '',
     },
   })
+
+  useEffect(() => {
+    // Verifica se o PWA está instalado e se o navegador suporta WebAuthn
+    if (isPwaMode() && window.PublicKeyCredential) {
+      setShowBiometricButton(true);
+    }
+  }, [isPwaMode]);
 
   if (isAuthenticated) {
     // Navigate("/");
@@ -57,6 +71,20 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
           ? error.message
           : 'Erro ao fazer login. Verifique suas credenciais.'
       )
+    }
+  }
+
+  async function handleBiometricLogin() {
+    try {
+      const loginData = await loginWithBiometrics();
+      if (loginData) {
+        handleLoginSuccess(loginData);
+        toast.success('Login biométrico realizado com sucesso!');
+      }
+      // Se loginData for nulo, o hook useWebAuthn já tratou o erro.
+    } catch (error) {
+      console.error('Erro no login biométrico:', error);
+      toast.error('Ocorreu um erro inesperado durante o login biométrico.');
     }
   }
 
@@ -123,10 +151,28 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Entrar
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button type="submit" className="w-full" disabled={loading || isBiometricLoading}>
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Entrar com E-mail
+            </Button>
+            {showBiometricButton && (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={handleBiometricLogin}
+                disabled={isBiometricLoading || loading}
+              >
+                {isBiometricLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Fingerprint className="mr-2 h-4 w-4" />
+                )}
+                Entrar com Biometria
+              </Button>
+            )}
+          </div>
         </form>
       </Form>
       <div className="relative">

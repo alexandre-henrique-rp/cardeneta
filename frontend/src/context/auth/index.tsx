@@ -25,7 +25,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>
   register: (data: any) => Promise<void>
   Logout: () => void
-  updateUser: (data: Partial<User>) => Promise<void>
+  updateUser: (data: Partial<User>) => Promise<void>;
+  handleLoginSuccess: (data: { token: string; expiresAt: number; user: User; }) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -182,6 +183,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     register,
     Logout,
     updateUser,
+    handleLoginSuccess,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

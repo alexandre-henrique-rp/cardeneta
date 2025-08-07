@@ -1,9 +1,4 @@
-import {
-  ChartNoAxesCombinedIcon,
-  FilePlus2,
-  NotebookPenIcon,
-  ServerCog,
-} from 'lucide-react'
+import { ChartNoAxesCombinedIcon, FilePlus2, ServerCog } from 'lucide-react'
 import { NavMain } from '@/components/nav-main'
 import { NavSecondary } from '@/components/nav-secondary'
 import { NavUser } from '@/components/nav-user'
@@ -48,10 +43,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton size="lg" asChild>
               <a href="/dashboard">
                 <div className="w-full flex gap-1 items-center justify-center">
-                  <NotebookPenIcon className="w-7 h-7" />
-                  <span className="text-xl font-bold text-primary font-ubuntu">
-                    Cardeneta App
-                  </span>
+                  <img src="/logo.png" alt="CadernetaApp" className="w-36" />
                 </div>
               </a>
             </SidebarMenuButton>
