@@ -1,7 +1,4 @@
-import { useEffect, useState } from 'react'
-import HomeComponent from '@/components/home-component'
-import { BiometricOnboardingDialog } from '@/components/auth/BiometricOnboardingDialog'
-import { useWebAuthn } from '@/hooks/useWebAuthn'
+
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/(private)/dashboard')({
@@ -9,23 +6,11 @@ export const Route = createFileRoute('/(private)/dashboard')({
 })
 
 function App() {
-  const [showOnboardingDialog, setShowOnboardingDialog] = useState(false)
-  const { isPwaMode, hasBiometricRegistration } = useWebAuthn()
-
-  useEffect(() => {
-    // Exibe o diálogo se estiver no modo PWA e a biometria ainda não foi registrada.
-    if (isPwaMode() && !hasBiometricRegistration()) {
-      setShowOnboardingDialog(true)
-    }
-  }, [isPwaMode, hasBiometricRegistration])
-
   return (
-    <>
-      <HomeComponent />
-      <BiometricOnboardingDialog
-        open={showOnboardingDialog}
-        onOpenChange={setShowOnboardingDialog}
-      />
-    </>
+    <div className="flex-1 space-y-4 p-8 pt-6">
+      <div className="flex items-center justify-between space-y-2">
+        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+      </div>
+    </div>
   )
 }
