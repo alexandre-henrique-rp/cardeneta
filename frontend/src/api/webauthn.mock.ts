@@ -14,13 +14,13 @@ import type {
  * Em um cenário real, este desafio seria único para cada solicitação.
  */
 export const mockRegistrationChallenge: PublicKeyCredentialCreationOptionsJSON = {
-  challenge: 'MOCK_CHALLENGE_1234567890ABCDEF',
+  challenge: 'bW9ja19jaGFsbGVuZ2VfMTIzNDU2Nzg5MEFCQ0RFRg',
   rp: {
     name: 'Cardeneta App',
     id: 'localhost',
   },
   user: {
-    id: 'MOCK_USER_ID_ABC123',
+    id: 'bW9ja191c2VyX2lkX0FCQzEyMw',
     name: 'usuario@teste.com',
     displayName: 'Usuário de Teste',
   },
@@ -41,11 +41,11 @@ export const mockRegistrationChallenge: PublicKeyCredentialCreationOptionsJSON =
  * Simula a geração de um desafio de login pelo servidor.
  */
 export const mockLoginChallenge: PublicKeyCredentialRequestOptionsJSON = {
-  challenge: 'MOCK_LOGIN_CHALLENGE_FEDCBA0987654321',
+  challenge: 'bW9ja19sb2dpbl9jaGFsbGVuZ2VfRkVEQ0JBMDA4NzY1NDMyMQ',
   allowCredentials: [
     {
       type: 'public-key',
-      id: 'MOCK_CREDENTIAL_ID',
+      id: 'bW9ja19jcmVkZW50aWFsX2lk',
       transports: ['internal'],
     },
   ],

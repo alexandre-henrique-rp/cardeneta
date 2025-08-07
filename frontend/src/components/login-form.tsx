@@ -39,6 +39,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
     login: loginWithBiometrics,
     isPwaMode,
     isLoading: isBiometricLoading,
+    hasBiometricRegistration,
   } = useWebAuthn()
   // const Navigate = useNavigate();
 
@@ -51,11 +52,23 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   })
 
   useEffect(() => {
-    // Verifica se o PWA está instalado e se o navegador suporta WebAuthn
-    if (isPwaMode() && window.PublicKeyCredential) {
-      setShowBiometricButton(true)
+    // Verifica se o PWA está instalado, se o navegador suporta WebAuthn e se há biometria registrada
+    const checkBiometricSupport = async () => {
+      if (isPwaMode() && window.PublicKeyCredential && hasBiometricRegistration()) {
+        try {
+          const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+          setShowBiometricButton(available)
+        } catch (error) {
+          console.warn('Erro ao verificar suporte biométrico:', error)
+          setShowBiometricButton(false)
+        }
+      } else {
+        setShowBiometricButton(false)
+      }
     }
-  }, [isPwaMode])
+    
+    checkBiometricSupport()
+  }, [isPwaMode, hasBiometricRegistration])
 
   if (isAuthenticated) {
     // Navigate("/");
