@@ -28,7 +28,7 @@ export function useWebAuthn() {
   /**
    * Inicia o processo de registro de uma nova credencial biométrica.
    */
-  const register = async () => {
+  const register = async (): Promise<boolean> => {
     setIsLoading(true)
     setError(null)
     try {
@@ -38,10 +38,11 @@ export function useWebAuthn() {
       })
       await webAuthnApi.verifyRegistration(registrationResponse)
       localStorage.setItem(BIOMETRIC_REGISTERED_KEY, 'true') // Marca como registrado
-      // TODO: Exibir notificação de sucesso para o usuário
+      return true
     } catch (err) {
       setError('Falha ao registrar biometria. Tente novamente.')
       console.error(err)
+      return false
     } finally {
       setIsLoading(false)
     }

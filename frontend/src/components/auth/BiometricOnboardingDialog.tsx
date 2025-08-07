@@ -21,15 +21,16 @@ interface Props {
  * Aparece após o primeiro login se o app for um PWA.
  */
 export function BiometricOnboardingDialog({ open, onOpenChange }: Props) {
-  const { register, isLoading, error } = useWebAuthn()
+  const { register, isLoading } = useWebAuthn()
 
   const handleRegister = async () => {
-    await register()
-    // O hook já trata o erro, mas podemos verificar se houve sucesso
-    if (!error) {
+    const success = await register()
+
+    if (success) {
       toast.success('Biometria ativada com sucesso!')
       onOpenChange(false) // Fecha o dialog após o sucesso
     } else {
+      // A mensagem de erro já é exibida pelo hook, mas podemos adicionar um toast se quisermos.
       toast.error('Não foi possível ativar a biometria.')
     }
   }
