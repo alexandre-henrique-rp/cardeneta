@@ -1,7 +1,10 @@
 {
-  "name": "frontend",
+  "name": "caderneta-app",
+  "version": "1.0.4",
   "private": true,
   "type": "module",
+  "author": "Alexandre Henrique da Rocha Araújo",
+  "license": "MIT",
   "scripts": {
     "dev": "vite --port 3001",
     "start": "vite --port 3001",
