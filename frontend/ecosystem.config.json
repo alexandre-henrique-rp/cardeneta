@@ -2,8 +2,8 @@
   "name": "frontend",
   "script": "yarn serve",
   "autorestart": true,
-  "output": "./logs/api-out.log",
-  "error": "./logs/api-error.log",
+  "output": "/var/www/html/logs/frontend/api-out.log",
+  "error": "/var/www/html/logs/frontend/api-error.log",
   "log_date_format": "YYYY-MM-DD HH:mm:ss Z",
   "merge_logs": true
 }
