@@ -1,6 +1,6 @@
 # Cardeneta - Sistema de Gerenciamento Financeiro Pessoal
 
-![Cardeneta Logo](https://via.placeholder.com/150x50?text=Cardeneta)  
+![Cardeneta Logo](frontend/public/logo.png)  
 *Sua carteira digital para controle financeiro simplificado*
 
 ## 📋 Visão Geral
