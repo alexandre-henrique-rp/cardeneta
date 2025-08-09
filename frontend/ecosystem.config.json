@@ -1,5 +1,9 @@
 {
   "name": "frontend",
   "script": "yarn serve",
-  "autorestart": true
+  "autorestart": true,
+  "output": "./logs/api-out.log",
+  "error": "./logs/api-error.log",
+  "log_date_format": "YYYY-MM-DD HH:mm:ss Z",
+  "merge_logs": true
 }
