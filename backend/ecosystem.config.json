@@ -1,5 +1,5 @@
 {
   "name": "backend",
   "script": "yarn start",
-  "watch": true
+  "autorestart": true
 }
