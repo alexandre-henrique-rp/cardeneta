@@ -1,0 +1,5 @@
+{
+  "name": "backend",
+  "script": "yarn start",
+  "watch": true
+}
