@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "script": "yarn start",
+  "script": "yarn start:prod",
   "autorestart": true,
   "output": "/var/www/html/logs/backend/api-out.log",
   "error": "/var/www/html/logs/backend/api-error.log",
