@@ -282,10 +282,11 @@ export function AtmForm({ mode, data }: AtmFormProps) {
           : undefined,
         gps: gpsLocation,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        statusPg: values.statusPg,
+        statusPg: values.statusPg || 'PAGO',
       }
 
       const api = ApiService()
+      console.log("🚀 ~ onSubmit ~ values.type:", values.type)
 
       if (mode === 'create') {
         if (values.type === 'Credito') {

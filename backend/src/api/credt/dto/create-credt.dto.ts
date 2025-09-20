@@ -80,4 +80,14 @@ export class CreateCredtDto {
   @Type(() => String)
   @Transform(({ value }) => value.trim().toUpperCase())
   timezone: string;
+
+  @ApiProperty({
+    example: 'PAGO',
+    description: 'Status de pagamento (PAGO, EM ABERTO, PENDENTE)',
+  })
+  @IsOptional()
+  @IsString()
+  @Type(() => String)
+  @Transform(({ value }) => value.trim().toUpperCase())
+  statusPg: string;
 }
