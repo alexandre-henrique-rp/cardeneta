@@ -15,7 +15,9 @@ export class AuthService {
   private readonly logger = new Logger(AuthService.name, { timestamp: true });
 
   async login(dados: CreateAuthDto) {
+    console.log("🚀 ~ AuthService ~ login ~ dados:", dados)
     const user = await this.userService.getEmail(dados.email);
+    console.log("🚀 ~ AuthService ~ login ~ user:", user)
     if (!user || !user.name) {
       this.logger.error('Usuario nao encontrado');
       throw new HttpException('Usuario nao encontrado ou não cadastrado', 401);
