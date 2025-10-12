@@ -123,18 +123,17 @@ export const usePushNotification = () => {
         }
       }
 
-      // Obter chave pública VAPID do servidor
-      const token = localStorage.getItem('token');
-      const vapidResponse = await axios.get(
-        `${API_URL}/push-notification/vapid-public-key`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      // Obter chave pública VAPID do .env
+      const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+      
+      if (!vapidPublicKey) {
+        setError('Chave VAPID não configurada. Adicione VITE_VAPID_PUBLIC_KEY no .env');
+        setIsLoading(false);
+        return false;
+      }
 
-      const vapidPublicKey = vapidResponse.data.publicKey;
+      // Obter token de autenticação
+      const token = localStorage.getItem('token');
 
       // Registrar service worker
       const registration = await navigator.serviceWorker.ready;
