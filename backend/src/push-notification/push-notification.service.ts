@@ -33,6 +33,10 @@ export class PushNotificationService {
       process.env.VAPID_SUBJECT || 'mailto:example@yourdomain.org';
 
     webpush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
+
+    // Log de inicialização
+    this.logger.log('Push Notification Service inicializado');
+    this.logger.log(`VAPID Subject: ${vapidSubject}`);
   }
 
   /**
