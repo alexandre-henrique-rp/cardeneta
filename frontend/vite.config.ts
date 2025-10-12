@@ -14,11 +14,8 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      strategies: 'injectManifest',
-      srcDir: 'public',
-      filename: 'sw.js',
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,webp,svg,ts,tsx}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,webp,svg}'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -27,11 +24,14 @@ export default defineConfig({
               cacheName: 'google-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 ano
+                maxAgeSeconds: 60 * 60 * 24 * 365
               }
             }
           }
-        ]
+        ],
+        // Importar handlers de push notification
+        importScripts: [],
+        additionalManifestEntries: []
       },
       manifest: {
         name: 'Cardeneta App',

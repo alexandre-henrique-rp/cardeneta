@@ -80,7 +80,7 @@ export async function registerPushSubscription(
       const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey)
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: convertedVapidKey,
+        applicationServerKey: convertedVapidKey as BufferSource,
       })
     }
 
