@@ -4,6 +4,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import * as express from 'express';
 
+const baseURL = process.env.URL_BASE_API || `http://localhost:${process.env.PORT}`;
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     rawBody: true,
@@ -42,10 +44,10 @@ async function bootstrap() {
     console.log(` `);
     console.log(` `);
     console.log(
-      `\x1b[1m\x1b[34mNest running on http://localhost:${process.env.PORT}\x1b[0m`,
+      `\x1b[1m\x1b[34mNest running on ${baseURL}\x1b[0m`,
     );
     console.log(
-      `\x1b[4m\x1b[43m\x1b[30mNest running on http://localhost:${process.env.PORT}/api\x1b[0m`,
+      `\x1b[4m\x1b[43m\x1b[30mNest running on ${baseURL}/api\x1b[0m`,
     );
   });
 }
