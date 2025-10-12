@@ -13,9 +13,12 @@ export default defineConfig({
     viteReact(),
     tailwindcss(),
     VitePWA({
+      strategies: 'generateSW', // Explicitamente usar generateSW
       registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'pwa-192x192.png', 'pwa-512x512.png'],
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,webp,svg}'],
+        cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -25,13 +28,27 @@ export default defineConfig({
               expiration: {
                 maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24 * 365
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
+          {
+            urlPattern: /^https:\/\/apiconta\.kingdevtec\.com\/api\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 5 // 5 minutos
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
               }
             }
           }
-        ],
-        // Importar handlers de push notification
-        importScripts: [],
-        additionalManifestEntries: []
+        ]
       },
       manifest: {
         name: 'Cardeneta App',
