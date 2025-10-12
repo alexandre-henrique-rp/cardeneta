@@ -229,4 +229,60 @@ export const ApiService = () => ({
       throw error
     }
   },
+
+  // Push Notifications
+  getVapidPublicKey: async () => {
+    try {
+      const response = await BaseApi.get('/push-notification/vapid-public-key')
+      return response.data
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        throw error.response.data.message
+      }
+      throw error
+    }
+  },
+
+  subscribePushNotification: async (data: {
+    endpoint: string
+    p256dh: string
+    auth: string
+    userAgent: string
+  }) => {
+    try {
+      const response = await BaseApi.post('/push-notification/subscribe', data)
+      return response.data
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        throw error.response.data.message
+      }
+      throw error
+    }
+  },
+
+  unsubscribePushNotification: async (endpoint: string) => {
+    try {
+      const response = await BaseApi.post('/push-notification/unsubscribe', {
+        endpoint,
+      })
+      return response.data
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        throw error.response.data.message
+      }
+      throw error
+    }
+  },
+
+  getUserSubscriptions: async () => {
+    try {
+      const response = await BaseApi.get('/push-notification/subscriptions')
+      return response.data
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        throw error.response.data.message
+      }
+      throw error
+    }
+  },
 })

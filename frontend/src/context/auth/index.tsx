@@ -3,6 +3,10 @@ import type { ReactNode } from 'react'
 import { ApiService } from '../../api/service'
 import { toast } from 'sonner'
 import { useNavigate } from '@tanstack/react-router'
+import {
+  registerPushSubscription,
+  isPushNotificationSupported,
+} from '../../services/pushNotification'
 
 export interface User {
   id: string
@@ -77,7 +81,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     checkAuth()
   }, [])
 
-  const handleLoginSuccess = (data: {
+  const handleLoginSuccess = async (data: {
     token: string
     expiresAt: number
     user: User
@@ -101,6 +105,38 @@ export function AuthProvider({ children }: AuthProviderProps) {
     )
     setUser(data.user)
     setToken(data.token)
+
+    // Registrar notificações push após login bem-sucedido
+    await setupPushNotifications()
+  }
+
+  /**
+   * Configura as notificações push para o usuário autenticado
+   * Solicita permissão e registra a subscrição no servidor
+   */
+  const setupPushNotifications = async () => {
+    try {
+      // Verificar se o navegador suporta push notifications
+      if (!isPushNotificationSupported()) {
+        console.log('Push notifications não são suportadas neste navegador')
+        return
+      }
+
+      // Obter a chave pública VAPID do servidor
+      const vapidKey = await api.getVapidPublicKey()
+
+      // Registrar a subscrição
+      const subscription = await registerPushSubscription(vapidKey)
+
+      if (subscription) {
+        // Enviar a subscrição para o servidor
+        await api.subscribePushNotification(subscription)
+        console.log('Notificações push registradas com sucesso')
+      }
+    } catch (error) {
+      console.error('Erro ao configurar notificações push:', error)
+      // Não mostrar erro ao usuário, pois é uma funcionalidade opcional
+    }
   }
 
   const Logout = () => {
