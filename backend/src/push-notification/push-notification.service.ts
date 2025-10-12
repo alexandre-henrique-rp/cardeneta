@@ -329,8 +329,11 @@ export class PushNotificationService {
         } catch (error) {
           failedCount++;
           this.logger.error(
-            `Erro ao enviar notificação de teste para ${subscription.endpoint}: ${error.message}`,
+            `Erro ao enviar notificação de teste para ${subscription.endpoint}:`,
           );
+          this.logger.error(`Status: ${error.statusCode}`);
+          this.logger.error(`Mensagem: ${error.message}`);
+          this.logger.error(`Body: ${JSON.stringify(error.body)}`);
 
           // Se o erro for 410 (Gone), remover a subscrição
           if (error.statusCode === 410) {
