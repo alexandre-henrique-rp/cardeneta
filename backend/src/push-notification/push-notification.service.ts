@@ -254,4 +254,119 @@ export class PushNotificationService {
       'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U'
     );
   }
+
+  /**
+   * Envia uma notificação de teste para todas as subscrições ativas
+   * Útil para testar se as notificações push estão funcionando
+   * Endpoint público para facilitar testes
+   * @param customData - Dados customizados para a notificação (opcional)
+   * @returns Objeto com estatísticas do envio
+   */
+  async sendTestNotification(
+    customData?: { title?: string; message?: string; redirectUrl?: string },
+  ) {
+    try {
+      // Buscar todas as subscrições ativas
+      const subscriptions = await this.prisma.pushSubscription.findMany({
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      if (subscriptions.length === 0) {
+        this.logger.warn('Nenhuma subscrição encontrada no sistema');
+        return {
+          success: false,
+          message: 'Nenhuma subscrição encontrada no sistema',
+          total: 0,
+          sent: 0,
+          failed: 0,
+        };
+      }
+
+      // Preparar payload da notificação de teste
+      const payload = JSON.stringify({
+        title: customData?.title || '🔔 Notificação de Teste',
+        body:
+          customData?.message ||
+          'Esta é uma notificação de teste do Cardeneta App!',
+        icon: '/pwa-192x192.png',
+        badge: '/pwa-192x192.png',
+        data: {
+          url: customData?.redirectUrl || '/',
+          timestamp: new Date().toISOString(),
+          testNotification: true,
+        },
+        tag: 'test-notification',
+        requireInteraction: false,
+      });
+
+      // Enviar notificações para todas as subscrições do usuário
+      let successCount = 0;
+      let failedCount = 0;
+
+      const sendPromises = subscriptions.map(async (subscription) => {
+        try {
+          await webpush.sendNotification(
+            {
+              endpoint: subscription.endpoint,
+              keys: {
+                p256dh: subscription.p256dh,
+                auth: subscription.auth,
+              },
+            },
+            payload,
+          );
+          successCount++;
+          this.logger.log(
+            `Notificação de teste enviada com sucesso para ${subscription.endpoint}`,
+          );
+        } catch (error) {
+          failedCount++;
+          this.logger.error(
+            `Erro ao enviar notificação de teste para ${subscription.endpoint}: ${error.message}`,
+          );
+
+          // Se o erro for 410 (Gone), remover a subscrição
+          if (error.statusCode === 410) {
+            await this.prisma.pushSubscription.delete({
+              where: { id: subscription.id },
+            });
+            this.logger.log(
+              `Subscrição removida (endpoint não mais válido): ${subscription.endpoint}`,
+            );
+          }
+        }
+      });
+
+      await Promise.all(sendPromises);
+
+      return {
+        success: successCount > 0,
+        message:
+          successCount > 0
+            ? 'Notificação de teste enviada com sucesso!'
+            : 'Falha ao enviar notificação de teste',
+        total: subscriptions.length,
+        sent: successCount,
+        failed: failedCount,
+        subscriptions: subscriptions.map((sub) => ({
+          endpoint: sub.endpoint,
+          userAgent: sub.userAgent,
+          createdAt: sub.createdAt,
+        })),
+      };
+    } catch (error) {
+      this.logger.error(
+        `Erro ao enviar notificação de teste: ${error.message}`,
+        error.stack,
+      );
+      throw new Error('Erro ao enviar notificação de teste');
+    }
+  }
 }

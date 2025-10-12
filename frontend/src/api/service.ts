@@ -285,4 +285,20 @@ export const ApiService = () => ({
       throw error
     }
   },
+
+  testPushNotification: async (data?: {
+    title?: string
+    message?: string
+    redirectUrl?: string
+  }) => {
+    try {
+      const response = await BaseApi.post('/push-notification/test', data || {})
+      return response.data
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        throw error.response.data.message
+      }
+      throw error
+    }
+  },
 })
