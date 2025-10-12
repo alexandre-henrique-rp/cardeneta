@@ -1,17 +1,49 @@
 /**
  * Script para verificar e exibir as chaves VAPID configuradas
  * Útil para debug de problemas com push notifications
+ * 
+ * Execute: node scripts/check-vapid-keys.js
  */
 
 const webpush = require('web-push');
-require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 
 console.log('\n=== Verificação de Chaves VAPID ===\n');
 
-// Verificar se as chaves estão no .env
-const publicKey = process.env.VAPID_PUBLIC_KEY;
-const privateKey = process.env.VAPID_PRIVATE_KEY;
-const subject = process.env.VAPID_SUBJECT;
+// Tentar ler o arquivo .env
+let publicKey = process.env.VAPID_PUBLIC_KEY;
+let privateKey = process.env.VAPID_PRIVATE_KEY;
+let subject = process.env.VAPID_SUBJECT;
+
+// Se não estiver nas variáveis de ambiente, tentar ler do arquivo .env
+if (!publicKey || !privateKey) {
+  try {
+    const envPath = path.join(__dirname, '..', '.env');
+    if (fs.existsSync(envPath)) {
+      const envContent = fs.readFileSync(envPath, 'utf8');
+      const lines = envContent.split('\n');
+      
+      lines.forEach(line => {
+        const [key, ...valueParts] = line.split('=');
+        let value = valueParts.join('=').trim();
+        
+        // Remover aspas simples ou duplas
+        value = value.replace(/^['"]|['"]$/g, '');
+        
+        if (key.trim() === 'VAPID_PUBLIC_KEY') {
+          publicKey = value;
+        } else if (key.trim() === 'VAPID_PRIVATE_KEY') {
+          privateKey = value;
+        } else if (key.trim() === 'VAPID_SUBJECT') {
+          subject = value;
+        }
+      });
+    }
+  } catch (error) {
+    console.log('⚠️  Não foi possível ler o arquivo .env');
+  }
+}
 
 console.log('Chaves no .env:');
 console.log(

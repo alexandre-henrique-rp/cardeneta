@@ -196,8 +196,10 @@ export class PushNotificationService {
         } catch (error) {
           failedCount++;
           this.logger.error(
-            `Erro ao enviar notificação para ${subscription.endpoint}: ${error.message}`,
+            `Erro ao enviar notificação para ${subscription.endpoint}:`,
           );
+          this.logger.error(`Erro completo: ${JSON.stringify(error, null, 2)}`);
+          this.logger.error(`Message: ${error.message || 'N/A'}`);
 
           // Se o erro for 410 (Gone), remover a subscrição
           if (error.statusCode === 410) {
@@ -331,9 +333,23 @@ export class PushNotificationService {
           this.logger.error(
             `Erro ao enviar notificação de teste para ${subscription.endpoint}:`,
           );
-          this.logger.error(`Status: ${error.statusCode}`);
-          this.logger.error(`Mensagem: ${error.message}`);
-          this.logger.error(`Body: ${JSON.stringify(error.body)}`);
+          
+          // Log completo do erro para debug
+          this.logger.error(`Erro completo: ${JSON.stringify(error, null, 2)}`);
+          this.logger.error(`Status Code: ${error.statusCode || 'N/A'}`);
+          this.logger.error(`Message: ${error.message || 'N/A'}`);
+          this.logger.error(`Name: ${error.name || 'N/A'}`);
+          
+          // Tentar extrair mais informações
+          if (error.body) {
+            this.logger.error(`Body: ${JSON.stringify(error.body)}`);
+          }
+          if (error.headers) {
+            this.logger.error(`Headers: ${JSON.stringify(error.headers)}`);
+          }
+          if (error.stack) {
+            this.logger.error(`Stack: ${error.stack}`);
+          }
 
           // Se o erro for 410 (Gone), remover a subscrição
           if (error.statusCode === 410) {
