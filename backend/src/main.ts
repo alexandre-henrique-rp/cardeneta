@@ -3,6 +3,10 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import * as express from 'express';
+import * as dns from 'dns';
+
+// Configurar DNS para preferir IPv4 (resolver problema de timeout com FCM)
+dns.setDefaultResultOrder('ipv4first');
 
 const baseURL = process.env.URL_BASE_API || `http://localhost:${process.env.PORT}`;
 
