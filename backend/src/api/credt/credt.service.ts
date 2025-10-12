@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateCredtDto } from './dto/create-credt.dto';
 import { UpdateCredtDto } from './dto/update-credt.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -6,10 +6,16 @@ import { Payload } from 'src/auth/entities/payload.entity';
 import { CredtEntity } from './entities/credt.entity';
 import { CreditIdEntity } from './entities/credit.id.entity';
 import { plainToClass } from 'class-transformer';
+import { PushNotificationService } from '../../push-notification/push-notification.service';
 
 @Injectable()
 export class CredtService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(CredtService.name, { timestamp: true });
+
+  constructor(
+    private prisma: PrismaService,
+    private pushNotificationService: PushNotificationService,
+  ) {}
 
   async create(dados: CreateCredtDto, user: Payload): Promise<CredtEntity> {
     if (!user || !user.id) {
@@ -23,6 +29,27 @@ export class CredtService {
         userId: user.id,
       },
     });
+
+    // Enviar notificação push para todos os usuários da wallet
+    try {
+      await this.pushNotificationService.sendNotificationToWalletUsers(
+        dados.walletId,
+        {
+          title: 'Novo Crédito Registrado',
+          message: `Um novo crédito de R$ ${dados.value.toFixed(2)} foi registrado${dados.nome ? ` - ${dados.nome}` : ''}.`,
+          redirectUrl: `/conta/${credito.id}`,
+          icon: '/pwa-192x192.png',
+        },
+      );
+      this.logger.log(
+        `Notificação enviada para wallet ${dados.walletId} sobre novo crédito ${credito.id}`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Erro ao enviar notificação para wallet ${dados.walletId}: ${error.message}`,
+      );
+      // Não lançar erro para não interromper o fluxo de criação do crédito
+    }
 
     return plainToClass(CredtEntity, credito);
   }

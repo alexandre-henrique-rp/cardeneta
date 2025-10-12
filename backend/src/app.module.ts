@@ -8,6 +8,7 @@ import { CredtModule } from './api/credt/credt.module';
 import { DebitModule } from './api/debit/debit.module';
 import { ComprovanteModule } from './api/comprovante/comprovante.module';
 import { WalletModule } from './api/wallet/wallet.module';
+import { PushNotificationModule } from './push-notification/push-notification.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { WalletModule } from './api/wallet/wallet.module';
     DebitModule,
     ComprovanteModule,
     WalletModule,
+    PushNotificationModule,
   ],
   providers: [UserService],
 })

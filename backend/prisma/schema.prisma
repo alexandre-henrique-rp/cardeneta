@@ -16,18 +16,19 @@ datasource db {
 }
 
 model User {
-  id          String       @id @default(uuid())
-  email       String       @unique
-  name        String?
-  senha       String
-  senhaHash   String
-  avatar      String?
-  status      Boolean      @default(true)
-  atms        Atm[]
-  userWallets UserWallet[]
-  trash       Trash[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id                String             @id @default(uuid())
+  email             String             @unique
+  name              String?
+  senha             String
+  senhaHash         String
+  avatar            String?
+  status            Boolean            @default(true)
+  atms              Atm[]
+  userWallets       UserWallet[]
+  trash             Trash[]
+  pushSubscriptions PushSubscription[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
 }
 
 model Wallet {
@@ -91,6 +92,18 @@ model Trash {
   user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model PushSubscription {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint     String   @unique
+  p256dh       String
+  auth         String
+  userAgent    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 enum TypeAtm {
