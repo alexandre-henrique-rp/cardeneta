@@ -8,7 +8,12 @@
 const webpush = require('web-push');
 const fs = require('fs');
 const path = require('path');
+const dns = require('dns');
+const https = require('https');
 const { PrismaClient } = require('@prisma/client');
+
+// Configurar DNS para preferir IPv4 (resolver problema de timeout com FCM)
+dns.setDefaultResultOrder('ipv4first');
 
 const prisma = new PrismaClient();
 
@@ -121,10 +126,26 @@ async function main() {
       },
     };
 
+    // Criar agente HTTPS customizado com timeout configurado
+    const httpsAgent = new https.Agent({
+      keepAlive: true,
+      timeout: 30000, // 30 segundos
+      maxSockets: 100,
+      family: 4, // Forçar IPv4
+    });
+
+    // Opções de envio com timeout e agente customizado
+    const options = {
+      timeout: 30000, // 30 segundos
+      TTL: 3600,
+      headers: {},
+      agent: httpsAgent,
+    };
+
     // Enviar
     const startTime = Date.now();
 
-    const response = await webpush.sendNotification(pushSubscription, payload);
+    const response = await webpush.sendNotification(pushSubscription, payload, options);
     
     const duration = Date.now() - startTime;
     console.log('\n✅ Notificação enviada com sucesso!');

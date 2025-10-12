@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 /**
  * Interface para os dados de subscrição
@@ -17,12 +17,13 @@ interface PushSubscriptionData {
  */
 export const usePushNotification = () => {
   const [isSupported, setIsSupported] = useState(false);
-  const [permission, setPermission] = useState<NotificationPermission>('default');
+  const [permission, setPermission] =
+    useState<NotificationPermission>("default");
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
   /**
    * Verifica se o navegador suporta notificações push
@@ -30,9 +31,9 @@ export const usePushNotification = () => {
   useEffect(() => {
     const checkSupport = () => {
       const supported =
-        'Notification' in window &&
-        'serviceWorker' in navigator &&
-        'PushManager' in window;
+        "Notification" in window &&
+        "serviceWorker" in navigator &&
+        "PushManager" in window;
       setIsSupported(supported);
 
       if (supported) {
@@ -55,7 +56,7 @@ export const usePushNotification = () => {
         const subscription = await registration.pushManager.getSubscription();
         setIsSubscribed(!!subscription);
       } catch (err) {
-        console.error('Erro ao verificar subscrição:', err);
+        console.error("Erro ao verificar subscrição:", err);
       }
     };
 
@@ -66,10 +67,10 @@ export const usePushNotification = () => {
    * Converte uma chave VAPID de base64 para Uint8Array
    */
   const urlBase64ToUint8Array = (base64String: string): Uint8Array => {
-    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
     const base64 = (base64String + padding)
-      .replace(/\-/g, '+')
-      .replace(/_/g, '/');
+      .replace(/\-/g, "+")
+      .replace(/_/g, "/");
 
     const rawData = window.atob(base64);
     const outputArray = new Uint8Array(rawData.length);
@@ -85,17 +86,17 @@ export const usePushNotification = () => {
    */
   const requestPermission = async (): Promise<boolean> => {
     if (!isSupported) {
-      setError('Notificações push não são suportadas neste navegador');
+      setError("Notificações push não são suportadas neste navegador");
       return false;
     }
 
     try {
       const result = await Notification.requestPermission();
       setPermission(result);
-      return result === 'granted';
+      return result === "granted";
     } catch (err) {
-      console.error('Erro ao solicitar permissão:', err);
-      setError('Erro ao solicitar permissão para notificações');
+      console.error("Erro ao solicitar permissão:", err);
+      setError("Erro ao solicitar permissão para notificações");
       return false;
     }
   };
@@ -105,7 +106,7 @@ export const usePushNotification = () => {
    */
   const subscribe = async (): Promise<boolean> => {
     if (!isSupported) {
-      setError('Notificações push não são suportadas neste navegador');
+      setError("Notificações push não são suportadas neste navegador");
       return false;
     }
 
@@ -114,26 +115,27 @@ export const usePushNotification = () => {
 
     try {
       // Solicitar permissão se ainda não foi concedida
-      if (permission !== 'granted') {
+      if (permission !== "granted") {
         const granted = await requestPermission();
         if (!granted) {
-          setError('Permissão para notificações negada');
+          setError("Permissão para notificações negada");
           setIsLoading(false);
           return false;
         }
       }
 
-      // Obter chave pública VAPID do .env
-      const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
-      
-      if (!vapidPublicKey) {
-        setError('Chave VAPID não configurada. Adicione VITE_VAPID_PUBLIC_KEY no .env');
-        setIsLoading(false);
-        return false;
-      }
+      // Obter chave pública VAPID do servidor
+      const token = localStorage.getItem("token");
+      const vapidResponse = await axios.get(
+        `${API_URL}/push-notification/vapid-public-key`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      // Obter token de autenticação
-      const token = localStorage.getItem('token');
+      const vapidPublicKey = vapidResponse.data.publicKey;
 
       // Registrar service worker
       const registration = await navigator.serviceWorker.ready;
@@ -141,15 +143,17 @@ export const usePushNotification = () => {
       // Criar subscrição
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
+        applicationServerKey: urlBase64ToUint8Array(
+          vapidPublicKey
+        ) as BufferSource,
       });
 
       // Extrair dados da subscrição
       const subscriptionJson = subscription.toJSON();
       const subscriptionData: PushSubscriptionData = {
         endpoint: subscription.endpoint,
-        p256dh: subscriptionJson.keys?.p256dh || '',
-        auth: subscriptionJson.keys?.auth || '',
+        p256dh: subscriptionJson.keys?.p256dh || "",
+        auth: subscriptionJson.keys?.auth || "",
         userAgent: navigator.userAgent,
       };
 
@@ -160,7 +164,7 @@ export const usePushNotification = () => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
@@ -169,8 +173,8 @@ export const usePushNotification = () => {
       setIsLoading(false);
       return true;
     } catch (err: any) {
-      console.error('Erro ao registrar subscrição:', err);
-      setError(err.response?.data?.message || 'Erro ao registrar subscrição');
+      console.error("Erro ao registrar subscrição:", err);
+      setError(err.response?.data?.message || "Erro ao registrar subscrição");
       setIsLoading(false);
       return false;
     }
@@ -181,7 +185,7 @@ export const usePushNotification = () => {
    */
   const unsubscribe = async (): Promise<boolean> => {
     if (!isSupported) {
-      setError('Notificações push não são suportadas neste navegador');
+      setError("Notificações push não são suportadas neste navegador");
       return false;
     }
 
@@ -199,7 +203,7 @@ export const usePushNotification = () => {
       }
 
       // Remover subscrição do servidor
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       await axios.delete(
         `${API_URL}/push-notification/unsubscribe/${encodeURIComponent(subscription.endpoint)}`,
         {
@@ -216,8 +220,8 @@ export const usePushNotification = () => {
       setIsLoading(false);
       return true;
     } catch (err: any) {
-      console.error('Erro ao remover subscrição:', err);
-      setError(err.response?.data?.message || 'Erro ao remover subscrição');
+      console.error("Erro ao remover subscrição:", err);
+      setError(err.response?.data?.message || "Erro ao remover subscrição");
       setIsLoading(false);
       return false;
     }
