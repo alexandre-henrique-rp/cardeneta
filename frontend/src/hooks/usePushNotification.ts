@@ -105,7 +105,10 @@ export const usePushNotification = () => {
    * Registra a subscrição de push notification no servidor
    */
   const subscribe = async (): Promise<boolean> => {
+    console.log("🔔 [usePushNotification] Iniciando processo de subscrição...");
+
     if (!isSupported) {
+      console.error("❌ [usePushNotification] Notificações não suportadas");
       setError("Notificações push não são suportadas neste navegador");
       return false;
     }
@@ -116,15 +119,19 @@ export const usePushNotification = () => {
     try {
       // Solicitar permissão se ainda não foi concedida
       if (permission !== "granted") {
+        console.log("🔐 [usePushNotification] Solicitando permissão...");
         const granted = await requestPermission();
         if (!granted) {
+          console.error("❌ [usePushNotification] Permissão negada");
           setError("Permissão para notificações negada");
           setIsLoading(false);
           return false;
         }
+        console.log("✅ [usePushNotification] Permissão concedida!");
       }
 
       // Obter chave pública VAPID do servidor
+      console.log("🔑 [usePushNotification] Obtendo chave VAPID do servidor...");
       const token = localStorage.getItem("token");
       const vapidResponse = await axios.get(
         `${API_URL}/push-notification/vapid-public-key`,
@@ -136,17 +143,22 @@ export const usePushNotification = () => {
       );
 
       const vapidPublicKey = vapidResponse.data.publicKey;
+      console.log("✅ [usePushNotification] Chave VAPID recebida:", vapidPublicKey);
 
       // Registrar service worker
+      console.log("⚙️ [usePushNotification] Aguardando service worker...");
       const registration = await navigator.serviceWorker.ready;
+      console.log("✅ [usePushNotification] Service worker ativo:", registration);
 
       // Criar subscrição
+      console.log("📝 [usePushNotification] Criando subscrição push...");
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(
           vapidPublicKey
         ) as BufferSource,
       });
+      console.log("✅ [usePushNotification] Subscrição criada:", subscription);
 
       // Extrair dados da subscrição
       const subscriptionJson = subscription.toJSON();
@@ -156,8 +168,10 @@ export const usePushNotification = () => {
         auth: subscriptionJson.keys?.auth || "",
         userAgent: navigator.userAgent,
       };
+      console.log("📦 [usePushNotification] Dados da subscrição:", subscriptionData);
 
       // Enviar subscrição para o servidor
+      console.log("📤 [usePushNotification] Enviando subscrição para o servidor...");
       await axios.post(
         `${API_URL}/push-notification/subscribe`,
         subscriptionData,
@@ -168,12 +182,14 @@ export const usePushNotification = () => {
           },
         }
       );
+      console.log("✅ [usePushNotification] Subscrição registrada no servidor!");
 
       setIsSubscribed(true);
       setIsLoading(false);
       return true;
     } catch (err: any) {
-      console.error("Erro ao registrar subscrição:", err);
+      console.error("❌ [usePushNotification] Erro ao registrar subscrição:", err);
+      console.error("❌ [usePushNotification] Detalhes do erro:", err.response?.data);
       setError(err.response?.data?.message || "Erro ao registrar subscrição");
       setIsLoading(false);
       return false;

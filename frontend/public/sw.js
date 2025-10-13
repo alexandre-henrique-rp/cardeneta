@@ -16,7 +16,21 @@ precacheAndRoute(self.__WB_MANIFEST || []);
  * Evento de push - recebe notificações do servidor
  */
 self.addEventListener('push', (event) => {
-  console.log('[Service Worker] Push recebido:', event);
+  console.log('==========================================');
+  console.log('[Service Worker] 🔔 PUSH EVENT RECEBIDO!');
+  console.log('[Service Worker] Event completo:', event);
+  console.log('[Service Worker] Event.data existe?', !!event.data);
+
+  if (event.data) {
+    console.log('[Service Worker] Event.data.text():', event.data.text());
+    try {
+      const jsonData = event.data.json();
+      console.log('[Service Worker] Event.data.json():', jsonData);
+    } catch (e) {
+      console.log('[Service Worker] Não foi possível converter para JSON');
+    }
+  }
+  console.log('==========================================');
 
   let notificationData = {
     title: 'Cardeneta App',
@@ -32,6 +46,7 @@ self.addEventListener('push', (event) => {
   if (event.data) {
     try {
       const data = event.data.json();
+      console.log('[Service Worker] 📦 Dados parseados:', data);
       notificationData = {
         title: data.title || notificationData.title,
         body: data.body || notificationData.body,
@@ -41,13 +56,17 @@ self.addEventListener('push', (event) => {
         tag: data.tag || 'default',
         requireInteraction: data.requireInteraction || false,
       };
+      console.log('[Service Worker] 📋 Notification data final:', notificationData);
     } catch (error) {
-      console.error('[Service Worker] Erro ao parsear dados da notificação:', error);
+      console.error('[Service Worker] ❌ Erro ao parsear dados da notificação:', error);
       notificationData.body = event.data.text();
     }
+  } else {
+    console.warn('[Service Worker] ⚠️  Event.data é null/undefined, usando dados padrão');
   }
 
   // Mostrar notificação
+  console.log('[Service Worker] 🔔 Tentando mostrar notificação...');
   const promiseChain = self.registration.showNotification(
     notificationData.title,
     {
@@ -69,7 +88,11 @@ self.addEventListener('push', (event) => {
         },
       ],
     }
-  );
+  ).then(() => {
+    console.log('[Service Worker] ✅ Notificação exibida com sucesso!');
+  }).catch((error) => {
+    console.error('[Service Worker] ❌ Erro ao exibir notificação:', error);
+  });
 
   event.waitUntil(promiseChain);
 });
