@@ -12,9 +12,6 @@ cleanupOutdatedCaches();
 // Pre-cache dos arquivos (será preenchido pelo VitePWA durante o build)
 precacheAndRoute(self.__WB_MANIFEST || []);
 
-// Workbox precache - será injetado pelo Vite PWA
-self.__WB_MANIFEST;
-
 /**
  * Evento de push - recebe notificações do servidor
  */
