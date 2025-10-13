@@ -3,6 +3,15 @@
  * Este arquivo gerencia cache e notificações push
  */
 
+// Importar Workbox para cache (será injetado pelo VitePWA)
+import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
+
+// Limpar caches antigos
+cleanupOutdatedCaches();
+
+// Pre-cache dos arquivos (será preenchido pelo VitePWA durante o build)
+precacheAndRoute(self.__WB_MANIFEST || []);
+
 /**
  * Evento de push - recebe notificações do servidor
  */

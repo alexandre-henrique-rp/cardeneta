@@ -8,6 +8,7 @@ import {
 import { useAuth } from '@/context/auth'
 import Loading from '@/loading'
 import { createFileRoute, Navigate, Outlet } from '@tanstack/react-router'
+import { PushNotificationPrompt } from '@/components/PushNotificationPrompt'
 
 export const Route = createFileRoute('/(private)')({
   component: PrivateLayout,
@@ -45,6 +46,7 @@ function PrivateLayout() {
           </div>
         </SidebarInset>
       </SidebarProvider>
+      <PushNotificationPrompt />
     </>
   )
 }
