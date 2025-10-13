@@ -18,7 +18,11 @@ export default defineConfig({
       filename: 'sw.js',
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'pwa-192x192.png', 'pwa-512x512.png'],
-      workbox: {
+      injectManifest: {
+        globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,webp,svg}'],
+        globIgnores: ['**/sw.js'],
+      },
+      injectManifest: {
         globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,webp,svg}'],
         maximumFileSizeToCacheInBytes: 5000000, // 5MB
       },
