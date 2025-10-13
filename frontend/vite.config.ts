@@ -73,7 +73,7 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3000,
     strictPort: true,
-    open: true,
+    open: false, // Desabilita abertura automática do navegador
     hmr: {
       overlay: false,
     },
