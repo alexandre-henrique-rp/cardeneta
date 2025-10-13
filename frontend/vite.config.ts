@@ -13,9 +13,15 @@ export default defineConfig({
     viteReact(),
     tailwindcss(),
     VitePWA({
-      strategies: 'generateSW', // Explicitamente usar generateSW
+      strategies: 'injectManifest', // Usar Service Worker customizado
+      srcDir: 'public',
+      filename: 'sw.js',
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'pwa-192x192.png', 'pwa-512x512.png'],
+      injectManifest: {
+        globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,webp,svg}'],
+        globIgnores: ['**/sw.js'],
+      },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,webp,svg}'],
         cleanupOutdatedCaches: true,

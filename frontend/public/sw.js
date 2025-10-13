@@ -1,7 +1,10 @@
 /**
- * Service Worker customizado para gerenciar notificações push
+ * Service Worker customizado para gerenciar notificações push e cache
  * Este arquivo gerencia cache e notificações push
  */
+
+// Workbox precache - será injetado pelo Vite PWA
+self.__WB_MANIFEST;
 
 /**
  * Evento de push - recebe notificações do servidor
