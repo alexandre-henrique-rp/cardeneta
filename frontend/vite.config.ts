@@ -35,6 +35,7 @@ export default defineConfig({
         lang: 'pt-BR',
         display: 'standalone',
         categories: ['finance', 'productivity'],
+        gcm_sender_id: '103953800507', // ID padrão do FCM para VAPID
         icons: [
           {
             src: 'pwa-192x192.png',
@@ -60,7 +61,8 @@ export default defineConfig({
       // Configurações de desenvolvimento
       devOptions: {
         enabled: true, // Habilita PWA em desenvolvimento
-        type: 'module'
+        type: 'module',
+        suppressWarnings: true,
       }
     }),
   ],
@@ -71,7 +73,7 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    port: 3000,
+    port: 3001,
     strictPort: true,
     open: false, // Desabilita abertura automática do navegador
     hmr: {
@@ -80,7 +82,8 @@ export default defineConfig({
   },
   preview: {
     host: '0.0.0.0',
-    port: 3000,
+    port: 3001,
+    strictPort: true,
     allowedHosts: [
       'contas.kingdevtec.com',
       'localhost',

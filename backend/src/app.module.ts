@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UserService } from './api/user/user.service';
@@ -12,6 +13,10 @@ import { PushNotificationModule } from './push-notification/push-notification.mo
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // Torna o ConfigModule disponível em todos os módulos
+      envFilePath: '.env', // Caminho para o arquivo .env
+    }),
     PrismaModule,
     AuthModule,
     UserModule,

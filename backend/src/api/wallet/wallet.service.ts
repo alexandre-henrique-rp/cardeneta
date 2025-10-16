@@ -67,7 +67,7 @@ export class WalletService {
         ? {
             userId: user.id,
             status: true,
-            createdAt: {
+            createdPg: {
               gte: startDate,
               lte: endDate,
             },
@@ -75,7 +75,7 @@ export class WalletService {
         : {
             walletId: id,
             status: true,
-            createdAt: {
+            createdPg: {
               gte: startDate,
               lte: endDate,
             },

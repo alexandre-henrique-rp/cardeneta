@@ -7,9 +7,9 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite --port 3001",
-    "start": "vite --port 3001",
+    "start": "npm run build && vite preview --port 3001",
     "build": "vite build && tsc",
-    "serve": "vite preview",
+    "serve": "vite preview --port 3001",
     "test": "vitest run",
     "format": "biome format",
     "lint": "biome lint",
@@ -50,6 +50,7 @@
     "tailwindcss": "^4.1.11",
     "vaul": "^1.1.2",
     "vite-plugin-pwa": "^1.0.2",
+    "web-push": "^3.6.7",
     "zod": "^4.0.14"
   },
   "devDependencies": {

@@ -46,20 +46,20 @@ model Atm {
   value       Float    @default(0)
   type        TypeAtm  @default(Credito)
   status      Boolean  @default(true)
-  statusPg    String?  
-  typePayment String?  
-  createdPg   DateTime?
-  paymentDueDate DateTime?
-  gps         Json?
+  statusPg    String?  // Status da transação no PagSeguro
+  typePayment String?  // Tipo de pagamento
+  createdPg   DateTime? // Data de criação no PagSeguro
+  paymentDueDate DateTime? // Data de vencimento do pagamento
+  gps         Json?    // Coordenadas do ATM
   timezone    String   @default("America/Sao_Paulo")
   proofId     String?
   proof       Proof?   @relation(fields: [proofId], references: [id])
   walletId    String
   wallet      Wallet   @relation(fields: [walletId], references: [id])
-  userId      String
+  userId      String   // ID do usuário que criou o ATM
   user        User     @relation(fields: [userId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now()) // Data de criação do ATM
+  updatedAt   DateTime @updatedAt // Data de atualização do ATM
 }
 
 model Proof {

@@ -142,13 +142,36 @@ export const usePushNotification = () => {
         }
       );
 
-      const vapidPublicKey = vapidResponse.data.publicKey;
+      const vapidPublicKey = vapidResponse.data;
       console.log("✅ [usePushNotification] Chave VAPID recebida:", vapidPublicKey);
 
-      // Registrar service worker
+      // Aguardar Service Worker estar pronto e ativo
       console.log("⚙️ [usePushNotification] Aguardando service worker...");
       const registration = await navigator.serviceWorker.ready;
-      console.log("✅ [usePushNotification] Service worker ativo:", registration);
+
+      // Verificar se o SW está realmente ativo
+      if (!registration.active) {
+        console.error("❌ [usePushNotification] Service Worker não está ativo");
+        throw new Error("Service Worker não está ativo. Recarregue a página.");
+      }
+
+      console.log("✅ [usePushNotification] Service worker ativo:", registration.active.state);
+
+      // Aguardar se estiver ativando
+      if (registration.active.state === "activating") {
+        console.log("⏳ [usePushNotification] Service Worker está ativando... aguardando...");
+        await new Promise<void>((resolve) => {
+          registration.active?.addEventListener("statechange", function listener(e) {
+            if ((e.target as ServiceWorker).state === "activated") {
+              registration.active?.removeEventListener("statechange", listener);
+              resolve();
+            }
+          });
+          // Timeout de segurança
+          setTimeout(() => resolve(), 2000);
+        });
+        console.log("✅ [usePushNotification] Service Worker agora está completamente ativo!");
+      }
 
       // Criar subscrição
       console.log("📝 [usePushNotification] Criando subscrição push...");

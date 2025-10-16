@@ -23,20 +23,22 @@ export class PushNotificationService {
   });
 
   constructor(private prisma: PrismaService) {
-    // Configurar VAPID keys (você deve gerar essas chaves e armazená-las em variáveis de ambiente)
-    const vapidPublicKey =
-      process.env.VAPID_PUBLIC_KEY ||
-      'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U';
-    const vapidPrivateKey =
-      process.env.VAPID_PRIVATE_KEY || 'UUxI4O8-FbRouAevSmBQ6o18hgE4nSG3qwvJTfKc-ls';
-    const vapidSubject =
-      process.env.VAPID_SUBJECT || 'mailto:example@yourdomain.org';
+    // Configurar VAPID keys (lidas do arquivo .env)
+    const vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
+    const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY;
+    const vapidSubject = process.env.VAPID_SUBJECT || 'mailto:example@yourdomain.org';
+
+    if (!vapidPublicKey || !vapidPrivateKey) {
+      this.logger.error('❌ VAPID_PUBLIC_KEY ou VAPID_PRIVATE_KEY não configuradas no .env!');
+      throw new Error('VAPID keys não configuradas. Verifique o arquivo .env');
+    }
 
     webpush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
 
     // Log de inicialização
-    this.logger.log('Push Notification Service inicializado');
-    this.logger.log(`VAPID Subject: ${vapidSubject}`);
+    this.logger.log('✅ Push Notification Service inicializado');
+    this.logger.log(`📧 VAPID Subject: ${vapidSubject}`);
+    this.logger.log(`🔑 VAPID Public Key: ${vapidPublicKey.substring(0, 20)}...`);
   }
 
   /**
@@ -255,10 +257,12 @@ export class PushNotificationService {
    * @returns Chave pública VAPID
    */
   getVapidPublicKey(): string {
-    return (
-      process.env.VAPID_PUBLIC_KEY ||
-      'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U'
-    );
+    const key = process.env.VAPID_PUBLIC_KEY;
+    if (!key) {
+      this.logger.error('❌ VAPID_PUBLIC_KEY não configurada no .env!');
+      throw new Error('VAPID_PUBLIC_KEY não configurada');
+    }
+    return key;
   }
 
   /**
