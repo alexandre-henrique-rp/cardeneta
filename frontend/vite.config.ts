@@ -5,6 +5,41 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import { resolve } from 'node:path'
+import { readFileSync, writeFileSync } from 'node:fs'
+
+/**
+ * Plugin para injetar variáveis de ambiente no Service Worker do Firebase
+ * Este plugin roda no Node.js durante o build e substitui os placeholders
+ * pelas variáveis de ambiente reais do .env
+ */
+const injectEnvToFirebaseSW = () => ({
+  name: 'inject-env-to-firebase-sw',
+  apply: 'build' as const,
+  closeBundle() {
+    try {
+      const swPath = resolve(__dirname, 'public/firebase-messaging-sw.js');
+      const distSwPath = resolve(__dirname, 'dist/firebase-messaging-sw.js');
+      
+      let content = readFileSync(swPath, 'utf-8');
+      
+      // process.env funciona aqui porque o plugin roda no Node.js durante o build
+      const apiKey = process.env.VITE_FIREBASE_API_KEY || '';
+      const messagingSenderId = process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '';
+      const appId = process.env.VITE_FIREBASE_APP_ID || '';
+      
+      // Substituir placeholders pelas variáveis de ambiente
+      content = content
+        .replace(/__VITE_FIREBASE_API_KEY__/g, apiKey)
+        .replace(/__VITE_FIREBASE_MESSAGING_SENDER_ID__/g, messagingSenderId)
+        .replace(/__VITE_FIREBASE_APP_ID__/g, appId);
+      
+      writeFileSync(distSwPath, content);
+      console.log('✅ Firebase Service Worker configurado com variáveis de ambiente');
+    } catch (error) {
+      console.warn('⚠️ Erro ao processar firebase-messaging-sw.js:', error);
+    }
+  }
+});
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,6 +47,7 @@ export default defineConfig({
     TanStackRouterVite({ autoCodeSplitting: true }),
     viteReact(),
     tailwindcss(),
+    injectEnvToFirebaseSW(),
     VitePWA({
       strategies: 'injectManifest', // Usar service worker customizado
       srcDir: 'public',
@@ -35,6 +71,7 @@ export default defineConfig({
         lang: 'pt-BR',
         display: 'standalone',
         categories: ['finance', 'productivity'],
+        // @ts-expect-error - gcm_sender_id é válido para Firebase Cloud Messaging
         gcm_sender_id: '103953800507', // ID padrão do FCM para VAPID
         icons: [
           {

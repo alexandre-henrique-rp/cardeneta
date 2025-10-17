@@ -153,7 +153,7 @@ export function AtmForm({ mode, data }: AtmFormProps) {
       value: 0,
       createdPg: today(getLocalTimeZone()),
       type: '',
-      paymentDueDate: null,
+      paymentDueDate: today(getLocalTimeZone()),
       typePayment: '',
       statusPg: '',
     },
