@@ -95,18 +95,42 @@ model Trash {
 }
 
 model PushSubscription {
-  id           String   @id @default(uuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  endpoint     String   @unique
-  p256dh       String
-  auth         String
-  userAgent    String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            String             @id @default(uuid())
+  userId        String
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint      String             @unique
+  p256dh        String
+  auth          String
+  userAgent     String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  notifications PushNotification[]
+}
+
+model PushNotification {
+  id               String            @id @default(uuid())
+  subscriptionId   String
+  subscription     PushSubscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  title            String
+  body             String
+  data             Json?
+  scheduledAt      DateTime?
+  sentAt           DateTime?
+  deliveredAt      DateTime?
+  status           NotificationStatus @default(PENDING)
+  errorMessage     String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 }
 
 enum TypeAtm {
   Credito
   Debito
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
 }

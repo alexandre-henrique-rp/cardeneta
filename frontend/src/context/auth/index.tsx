@@ -125,17 +125,37 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Obter a chave pública VAPID do servidor
       const vapidKey = await api.getVapidPublicKey()
 
+      if (!vapidKey) {
+        console.error('Chave VAPID não foi retornada pelo servidor')
+        return
+      }
+
       // Registrar a subscrição
       const subscription = await registerPushSubscription(vapidKey)
 
       if (subscription) {
         // Enviar a subscrição para o servidor
         await api.subscribePushNotification(subscription)
-        console.log('Notificações push registradas com sucesso')
+        console.log('✅ Notificações push registradas com sucesso')
+        toast.success('Notificações ativadas com sucesso!')
+      } else {
+        console.warn('Não foi possível criar subscrição de notificações')
+        toast.info('Notificações não foram ativadas')
       }
-    } catch (error) {
-      console.error('Erro ao configurar notificações push:', error)
-      // Não mostrar erro ao usuário, pois é uma funcionalidade opcional
+    } catch (error: any) {
+      console.error('❌ Erro ao configurar notificações push:', error)
+      
+      // Mensagem específica baseada no tipo de erro
+      if (error.message?.includes('Service Worker não está ativo')) {
+        toast.error('Erro ao ativar notificações. Recarregue a página e tente novamente.')
+      } else if (error.message?.includes('Chave VAPID inválida')) {
+        toast.error('Erro de configuração do servidor. Contate o suporte.')
+        console.error('⚠️ Problema com a chave VAPID do servidor')
+      } else if (error.message?.includes('permission')) {
+        toast.info('Você negou permissão para notificações')
+      } else {
+        toast.error('Erro ao ativar notificações. Verifique o console para mais detalhes.')
+      }
     }
   }
 

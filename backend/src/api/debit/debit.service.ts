@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { plainToClass } from 'class-transformer';
+import { Payload } from 'src/auth/entities/payload.entity';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDebitDto } from './dto/create-debit.dto';
 import { UpdateDebitDto } from './dto/update-debit.dto';
-import { Payload } from 'src/auth/entities/payload.entity';
 import { DebitEntity } from './entities/debit.entity';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { DebitIdEntity } from './entities/debit.id.entity';
-import { plainToClass } from 'class-transformer';
-import { PushNotificationService } from '../../push-notification/push-notification.service';
 
 @Injectable()
 export class DebitService {
@@ -14,7 +13,6 @@ export class DebitService {
 
   constructor(
     private prisma: PrismaService,
-    private pushNotificationService: PushNotificationService,
   ) {}
   async create(dados: CreateDebitDto, user: Payload): Promise<DebitEntity> {
     if (!user || !user.id) {
@@ -28,27 +26,6 @@ export class DebitService {
         userId: user.id,
       },
     });
-
-    // Enviar notificação push para todos os usuários da wallet
-    try {
-      await this.pushNotificationService.sendNotificationToWalletUsers(
-        dados.walletId,
-        {
-          title: 'Novo Débito Registrado',
-          message: `Um novo débito de R$ ${dados.value.toFixed(2)} foi registrado${dados.nome ? ` - ${dados.nome}` : ''}.`,
-          redirectUrl: `/conta/${debito.id}`,
-          icon: '/pwa-192x192.png',
-        },
-      );
-      this.logger.log(
-        `Notificação enviada para wallet ${dados.walletId} sobre novo débito ${debito.id}`,
-      );
-    } catch (error) {
-      this.logger.error(
-        `Erro ao enviar notificação para wallet ${dados.walletId}: ${error.message}`,
-      );
-      // Não lançar erro para não interromper o fluxo de criação do débito
-    }
 
     return debito as DebitEntity;
   }

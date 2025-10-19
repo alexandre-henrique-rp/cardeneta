@@ -7,8 +7,8 @@ import * as dns from 'dns';
 
 // Configurar DNS para preferir IPv4 (resolver problema de timeout com FCM)
 dns.setDefaultResultOrder('ipv4first');
-
-const baseURL = process.env.URL_BASE_API || `http://localhost:${process.env.PORT}`;
+const Porta = process.env.PORT || 3000;
+const baseURL = `${process.env.URL_BASE_API}:${Porta}` || `http://localhost:${Porta}`;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -44,7 +44,7 @@ async function bootstrap() {
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-  await app.listen(process.env.PORT ?? 3000, () => {
+  await app.listen(Porta, () => {
     console.log(` `);
     console.log(` `);
     console.log(

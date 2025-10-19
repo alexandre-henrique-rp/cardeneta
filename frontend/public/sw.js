@@ -1,145 +1,135 @@
 /**
- * Service Worker customizado para gerenciar notificações push e cache
- * Este arquivo gerencia cache e notificações push
+ * Service Worker para Push Notifications
+ * Gerencia notificações push usando web-push padrão
  */
 
-// Importar Workbox para cache (será injetado pelo VitePWA)
-import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
-
-// Limpar caches antigos
-cleanupOutdatedCaches();
-
-// Pre-cache dos arquivos (será preenchido pelo VitePWA durante o build)
-precacheAndRoute(self.__WB_MANIFEST || []);
+// Variável para armazenar a URL da API
+const API_URL = self.location.origin.includes('localhost')
+  ? 'http://localhost:3000'
+  : 'https://api.kingdevtec.com';
 
 /**
- * Evento de push - recebe notificações do servidor
+ * Evento disparado quando uma notificação push é recebida
  */
-self.addEventListener('push', (event) => {
-  console.log('==========================================');
-  console.log('[Service Worker] 🔔 PUSH EVENT RECEBIDO!');
-  console.log('[Service Worker] Event completo:', event);
-  console.log('[Service Worker] Event.data existe?', !!event.data);
+self.addEventListener('push', async (event) => {
+  console.log('[Service Worker] Push recebido:', event);
 
-  if (event.data) {
-    console.log('[Service Worker] Event.data.text():', event.data.text());
-    try {
-      const jsonData = event.data.json();
-      console.log('[Service Worker] Event.data.json():', jsonData);
-    } catch (e) {
-      console.log('[Service Worker] Não foi possível converter para JSON');
-    }
-  }
-  console.log('==========================================');
-
-  let notificationData = {
-    title: 'Cardeneta App',
-    body: 'Nova notificação',
-    icon: '/pwa-192x192.png',
-    badge: '/pwa-192x192.png',
-    data: {
-      url: '/',
-    },
-  };
-
-  // Tentar extrair dados da notificação
-  if (event.data) {
-    try {
-      const data = event.data.json();
-      console.log('[Service Worker] 📦 Dados parseados:', data);
-      notificationData = {
-        title: data.title || notificationData.title,
-        body: data.body || notificationData.body,
-        icon: data.icon || notificationData.icon,
-        badge: data.badge || notificationData.badge,
-        data: data.data || notificationData.data,
-        tag: data.tag || 'default',
-        requireInteraction: data.requireInteraction || false,
-      };
-      console.log('[Service Worker] 📋 Notification data final:', notificationData);
-    } catch (error) {
-      console.error('[Service Worker] ❌ Erro ao parsear dados da notificação:', error);
-      notificationData.body = event.data.text();
-    }
-  } else {
-    console.warn('[Service Worker] ⚠️  Event.data é null/undefined, usando dados padrão');
+  if (!event.data) {
+    console.log('[Service Worker] Push sem dados');
+    return;
   }
 
-  // Mostrar notificação
-  console.log('[Service Worker] 🔔 Tentando mostrar notificação...');
-  const promiseChain = self.registration.showNotification(
-    notificationData.title,
-    {
-      body: notificationData.body,
-      icon: notificationData.icon,
-      badge: notificationData.badge,
-      data: notificationData.data,
-      tag: notificationData.tag,
-      requireInteraction: notificationData.requireInteraction,
+  try {
+    const data = event.data.json();
+    console.log('[Service Worker] Dados do push:', data);
+
+    const { title, body, icon, badge, data: customData, notificationId } = data;
+
+    // Opções da notificação
+    const options = {
+      body: body || 'Nova notificação',
+      icon: icon || '/icon-192x192.png',
+      badge: badge || '/badge-72x72.png',
+      data: {
+        ...customData,
+        notificationId,
+        url: customData?.url || '/',
+      },
       vibrate: [200, 100, 200],
-      actions: [
-        {
-          action: 'open',
-          title: 'Abrir',
-        },
-        {
-          action: 'close',
-          title: 'Fechar',
-        },
-      ],
-    }
-  ).then(() => {
-    console.log('[Service Worker] ✅ Notificação exibida com sucesso!');
-  }).catch((error) => {
-    console.error('[Service Worker] ❌ Erro ao exibir notificação:', error);
-  });
+      tag: notificationId || `notification-${Date.now()}`,
+      requireInteraction: false,
+      actions: customData?.actions || []
+    };
 
-  event.waitUntil(promiseChain);
+    // Exibe a notificação
+    event.waitUntil(
+      self.registration.showNotification(title || 'Notificação', options).then(() => {
+        // Marca a notificação como entregue no backend
+        if (notificationId) {
+          return markAsDelivered(notificationId);
+        }
+      })
+    );
+  } catch (error) {
+    console.error('[Service Worker] Erro ao processar push:', error);
+  }
 });
 
 /**
- * Evento de clique na notificação
+ * Marca uma notificação como entregue no backend
+ */
+async function markAsDelivered(notificationId) {
+  try {
+    console.log('[Service Worker] Marcando notificação como entregue:', notificationId);
+
+    const response = await fetch(
+      `${API_URL}/push-notifications/notifications/${notificationId}/delivered`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.ok) {
+      console.log('[Service Worker] Notificação marcada como entregue');
+    } else {
+      console.error('[Service Worker] Erro ao marcar como entregue:', response.status);
+    }
+  } catch (error) {
+    console.error('[Service Worker] Erro ao marcar notificação como entregue:', error);
+  }
+}
+
+/**
+ * Evento disparado quando o usuário clica na notificação
  */
 self.addEventListener('notificationclick', (event) => {
   console.log('[Service Worker] Notificação clicada:', event);
 
   event.notification.close();
 
-  // Se a ação for 'close', apenas fechar a notificação
-  if (event.action === 'close') {
-    return;
-  }
-
-  // Obter URL de redirecionamento dos dados da notificação
   const urlToOpen = event.notification.data?.url || '/';
 
-  // Abrir ou focar na janela do app
-  const promiseChain = clients
-    .matchAll({
-      type: 'window',
-      includeUncontrolled: true,
-    })
-    .then((windowClients) => {
-      // Verificar se já existe uma janela aberta
-      for (let i = 0; i < windowClients.length; i++) {
-        const client = windowClients[i];
-        if (client.url === urlToOpen && 'focus' in client) {
-          return client.focus();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        // Verifica se já existe uma janela aberta
+        for (const client of clientList) {
+          if (client.url === urlToOpen && 'focus' in client) {
+            return client.focus();
+          }
         }
-      }
-
-      // Se não houver janela aberta, abrir uma nova
-      if (clients.openWindow) {
-        return clients.openWindow(urlToOpen);
-      }
-    });
-
-  event.waitUntil(promiseChain);
+        // Se não existe, abre uma nova janela
+        if (clients.openWindow) {
+          return clients.openWindow(urlToOpen);
+        }
+      })
+  );
 });
 
 /**
- * Evento de fechamento da notificação
+ * Evento disparado quando a notificação é fechada
  */
 self.addEventListener('notificationclose', (event) => {
-  console.log('[Service Worker] Notificação fechada:', event);
+  console.log('[Service Worker] Notificação fechada:', event.notification.tag);
 });
+
+/**
+ * Evento de instalação do Service Worker
+ */
+self.addEventListener('install', (event) => {
+  console.log('[Service Worker] Instalando...');
+  self.skipWaiting();
+});
+
+/**
+ * Evento de ativação do Service Worker
+ */
+self.addEventListener('activate', (event) => {
+  console.log('[Service Worker] Ativando...');
+  event.waitUntil(clients.claim());
+});
+
+console.log('[Service Worker] Carregado e pronto para receber push notifications');

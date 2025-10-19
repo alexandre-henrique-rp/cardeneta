@@ -1,12 +1,9 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
-import './lib/messaging';
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
-// Registrar service worker
-import { registerSW } from 'virtual:pwa-register'
 import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 
@@ -26,17 +23,6 @@ declare module '@tanstack/react-router' {
     router: typeof router
   }
 }
-// Registrar o service worker
-const updateSW = registerSW({
-  onNeedRefresh() {
-    if (confirm('Nova versão disponível. Deseja atualizar?')) {
-      updateSW(true)
-    }
-  },
-  onOfflineReady() {
-    console.log('App pronto para funcionar offline')
-  },
-})
 
 // Render the app
 const rootElement = document.getElementById('app')
@@ -47,6 +33,20 @@ if (rootElement && !rootElement.innerHTML) {
       <RouterProvider router={router} />
     </StrictMode>
   )
+}
+
+// Registra o Service Worker para Push Notifications
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((registration) => {
+        console.log('Service Worker registrado com sucesso:', registration.scope);
+      })
+      .catch((error) => {
+        console.error('Erro ao registrar Service Worker:', error);
+      });
+  });
 }
 
 // If you want to start measuring performance in your app, pass a function

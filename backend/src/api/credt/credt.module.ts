@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { CredtService } from './credt.service';
 import { CredtController } from './credt.controller';
-import { PushNotificationModule } from '../../push-notification/push-notification.module';
+import { CredtService } from './credt.service';
 
 @Module({
-  imports: [PrismaModule, PushNotificationModule],
+  imports: [PrismaModule],
   controllers: [CredtController],
   providers: [CredtService],
 })

@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
-import { DebitService } from './debit.service';
-import { DebitController } from './debit.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { PushNotificationModule } from '../../push-notification/push-notification.module';
+import { DebitController } from './debit.controller';
+import { DebitService } from './debit.service';
 
 @Module({
-  imports: [PrismaModule, PushNotificationModule],
+  imports: [PrismaModule],
   controllers: [DebitController],
   providers: [DebitService],
 })
