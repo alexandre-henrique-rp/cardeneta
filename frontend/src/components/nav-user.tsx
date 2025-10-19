@@ -13,15 +13,21 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+import { Switch } from '@/components/ui/switch'
 import { useAuth } from '@/context/auth'
 import { useNavigate } from '@tanstack/react-router'
-import { ChevronsUpDown, LogOut } from 'lucide-react'
+import { ChevronsUpDown, LogOut, Bell, BellOff } from 'lucide-react'
 import { toast } from 'sonner'
+import { usePushNotification } from '@/hooks/usePushNotification'
+import { togglePushNotifications } from '@/services/message'
+import { useState } from 'react'
 
 export function NavUser() {
   const { isMobile } = useSidebar()
   const { User, Logout, loading } = useAuth()
   const navigate = useNavigate()
+  const { isSupported, isSubscribed, permission } = usePushNotification()
+  const [isTogglingNotifications, setIsTogglingNotifications] = useState(false)
 
   const handleLogout = () => {
     try {
@@ -33,6 +39,18 @@ export function NavUser() {
       toast.error(
         'Ocorreu um erro ao tentar sair do sistema. Por favor, tente novamente.'
       )
+    }
+  }
+
+  const handleToggleNotifications = async (checked: boolean) => {
+    if (isTogglingNotifications) return
+
+    setIsTogglingNotifications(true)
+    try {
+      await togglePushNotifications(checked)
+      // A função togglePushNotifications já mostra o toast de sucesso/erro
+    } finally {
+      setIsTogglingNotifications(false)
     }
   }
 
@@ -97,6 +115,41 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+
+            {/* Notificações Push */}
+            {isSupported && (
+              <>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onSelect={(e) => e.preventDefault()}
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-2">
+                      {isSubscribed ? (
+                        <Bell className="h-4 w-4" />
+                      ) : (
+                        <BellOff className="h-4 w-4" />
+                      )}
+                      <span>Notificações</span>
+                    </div>
+                    <Switch
+                      checked={isSubscribed && permission === 'granted'}
+                      onCheckedChange={handleToggleNotifications}
+                      disabled={isTogglingNotifications}
+                    />
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+              </>
+            )}
+
+            {/* Ver Notificações */}
+            <DropdownMenuItem onClick={() => navigate({ to: '/notifications' })}>
+              <Bell />
+              Ver Notificações
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+
             <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out

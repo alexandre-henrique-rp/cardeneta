@@ -10,6 +10,22 @@ interface PushSubscriptionData {
   userAgent?: string;
 }
 
+/**
+ * Interface para notificação recebida
+ */
+export interface Notification {
+  id: string;
+  title: string;
+  body: string;
+  icon?: string;
+  badge?: string;
+  data?: Record<string, any>;
+  createdAt: string;
+  deliveredAt?: string;
+  readAt?: string;
+  status: 'pending' | 'delivered' | 'read' | 'failed';
+}
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 /**
@@ -103,4 +119,65 @@ export const unsubscribeFromPushNotifications = async (): Promise<void> => {
   // Remove a subscrição do navegador
   await subscription.unsubscribe();
   localStorage.removeItem("pushSubscriptionId");
+};
+
+/**
+ * Lista as notificações do usuário
+ */
+export const getNotifications = async (): Promise<Notification[]> => {
+  const token = localStorage.getItem("token");
+  const response = await axios.get(`${API_URL}/push-notifications/notifications`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+
+/**
+ * Marca uma notificação como lida
+ */
+export const markNotificationAsRead = async (notificationId: string): Promise<void> => {
+  const token = localStorage.getItem("token");
+  await axios.patch(
+    `${API_URL}/push-notifications/notifications/${notificationId}/read`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+/**
+ * Marca todas as notificações como lidas
+ */
+export const markAllNotificationsAsRead = async (): Promise<void> => {
+  const token = localStorage.getItem("token");
+  await axios.patch(
+    `${API_URL}/push-notifications/notifications/read-all`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+/**
+ * Deleta uma notificação
+ */
+export const deleteNotification = async (notificationId: string): Promise<void> => {
+  const token = localStorage.getItem("token");
+  await axios.delete(
+    `${API_URL}/push-notifications/notifications/${notificationId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };

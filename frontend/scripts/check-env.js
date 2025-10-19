@@ -43,12 +43,7 @@ if (existsSync(envPath)) {
   const env = loadEnv('development', rootDir, 'VITE_');
   
   const requiredVars = [
-    'VITE_API_URL',
-    'VITE_FIREBASE_API_KEY',
-    'VITE_FIREBASE_MESSAGING_SENDER_ID',
-    'VITE_FIREBASE_APP_ID',
-    'VITE_FIREBASE_MEASUREMENT_ID',
-    'VITE_VAPID_PUBLIC_KEY'
+    'VITE_API_URL'
   ];
   
   console.log('\n📊 Status das variáveis VITE_:');
