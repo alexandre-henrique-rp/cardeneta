@@ -5,11 +5,10 @@
  * gerencia push notifications
  */
 
-// Importa Workbox se estiver disponível (injetado pelo VitePWA)
-// Se não estiver, o SW funcionará apenas para push notifications
-if (typeof importScripts === 'function') {
-  // Workbox será injetado aqui pelo VitePWA durante o build
-}
+// Precaching do VitePWA (OBRIGATÓRIO)
+// Esta marcação será substituída pelo VitePWA durante o build
+const precacheManifest = self.__WB_MANIFEST || [];
+console.log('[SW] Precache configurado:', precacheManifest.length, 'arquivos');
 
 // Variável para armazenar a URL da API
 const API_URL = self.location.origin.includes('localhost')
@@ -147,8 +146,19 @@ self.addEventListener('notificationclose', (event) => {
  */
 self.addEventListener('install', (event) => {
   console.log('[SW] Instalando...');
-  // skipWaiting força a ativação imediata do novo SW
-  self.skipWaiting();
+
+  // Precache dos assets estáticos
+  const cachePromise = precacheManifest.length > 0
+    ? caches.open('pwa-cache-v1').then((cache) => {
+        console.log('[SW] Precaching', precacheManifest.length, 'arquivos');
+        return cache.addAll(precacheManifest.map(entry => entry.url || entry));
+      })
+    : Promise.resolve();
+
+  event.waitUntil(cachePromise.then(() => {
+    // skipWaiting força a ativação imediata do novo SW
+    return self.skipWaiting();
+  }));
 });
 
 /**
