@@ -15,7 +15,6 @@ import { Route as privateDashboardRouteImport } from './routes/(private)/dashboa
 import { Route as PublicLoginIndexRouteImport } from './routes/_public/login/index'
 import { Route as PublicCadastroIndexRouteImport } from './routes/_public/cadastro/index'
 import { Route as privateLayoutNovoRegistroIndexRouteImport } from './routes/(private)/_layout/novo-registro/index'
-import { Route as privateLayoutNotificationsIndexRouteImport } from './routes/(private)/_layout/notifications/index'
 import { Route as privateLayoutConfiguracoesIndexRouteImport } from './routes/(private)/_layout/configuracoes/index'
 import { Route as privateLayoutContaIdIndexRouteImport } from './routes/(private)/_layout/conta/$id/index'
 
@@ -49,12 +48,6 @@ const privateLayoutNovoRegistroIndexRoute =
     path: '/novo-registro/',
     getParentRoute: () => privateRouteRoute,
   } as any)
-const privateLayoutNotificationsIndexRoute =
-  privateLayoutNotificationsIndexRouteImport.update({
-    id: '/_layout/notifications/',
-    path: '/notifications/',
-    getParentRoute: () => privateRouteRoute,
-  } as any)
 const privateLayoutConfiguracoesIndexRoute =
   privateLayoutConfiguracoesIndexRouteImport.update({
     id: '/_layout/configuracoes/',
@@ -74,7 +67,6 @@ export interface FileRoutesByFullPath {
   '/cadastro': typeof PublicCadastroIndexRoute
   '/login': typeof PublicLoginIndexRoute
   '/configuracoes': typeof privateLayoutConfiguracoesIndexRoute
-  '/notifications': typeof privateLayoutNotificationsIndexRoute
   '/novo-registro': typeof privateLayoutNovoRegistroIndexRoute
   '/conta/$id': typeof privateLayoutContaIdIndexRoute
 }
@@ -84,7 +76,6 @@ export interface FileRoutesByTo {
   '/cadastro': typeof PublicCadastroIndexRoute
   '/login': typeof PublicLoginIndexRoute
   '/configuracoes': typeof privateLayoutConfiguracoesIndexRoute
-  '/notifications': typeof privateLayoutNotificationsIndexRoute
   '/novo-registro': typeof privateLayoutNovoRegistroIndexRoute
   '/conta/$id': typeof privateLayoutContaIdIndexRoute
 }
@@ -96,7 +87,6 @@ export interface FileRoutesById {
   '/_public/cadastro/': typeof PublicCadastroIndexRoute
   '/_public/login/': typeof PublicLoginIndexRoute
   '/(private)/_layout/configuracoes/': typeof privateLayoutConfiguracoesIndexRoute
-  '/(private)/_layout/notifications/': typeof privateLayoutNotificationsIndexRoute
   '/(private)/_layout/novo-registro/': typeof privateLayoutNovoRegistroIndexRoute
   '/(private)/_layout/conta/$id/': typeof privateLayoutContaIdIndexRoute
 }
@@ -108,7 +98,6 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/login'
     | '/configuracoes'
-    | '/notifications'
     | '/novo-registro'
     | '/conta/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -118,7 +107,6 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/login'
     | '/configuracoes'
-    | '/notifications'
     | '/novo-registro'
     | '/conta/$id'
   id:
@@ -129,7 +117,6 @@ export interface FileRouteTypes {
     | '/_public/cadastro/'
     | '/_public/login/'
     | '/(private)/_layout/configuracoes/'
-    | '/(private)/_layout/notifications/'
     | '/(private)/_layout/novo-registro/'
     | '/(private)/_layout/conta/$id/'
   fileRoutesById: FileRoutesById
@@ -185,13 +172,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof privateLayoutNovoRegistroIndexRouteImport
       parentRoute: typeof privateRouteRoute
     }
-    '/(private)/_layout/notifications/': {
-      id: '/(private)/_layout/notifications/'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof privateLayoutNotificationsIndexRouteImport
-      parentRoute: typeof privateRouteRoute
-    }
     '/(private)/_layout/configuracoes/': {
       id: '/(private)/_layout/configuracoes/'
       path: '/configuracoes'
@@ -212,7 +192,6 @@ declare module '@tanstack/react-router' {
 interface privateRouteRouteChildren {
   privateDashboardRoute: typeof privateDashboardRoute
   privateLayoutConfiguracoesIndexRoute: typeof privateLayoutConfiguracoesIndexRoute
-  privateLayoutNotificationsIndexRoute: typeof privateLayoutNotificationsIndexRoute
   privateLayoutNovoRegistroIndexRoute: typeof privateLayoutNovoRegistroIndexRoute
   privateLayoutContaIdIndexRoute: typeof privateLayoutContaIdIndexRoute
 }
@@ -220,7 +199,6 @@ interface privateRouteRouteChildren {
 const privateRouteRouteChildren: privateRouteRouteChildren = {
   privateDashboardRoute: privateDashboardRoute,
   privateLayoutConfiguracoesIndexRoute: privateLayoutConfiguracoesIndexRoute,
-  privateLayoutNotificationsIndexRoute: privateLayoutNotificationsIndexRoute,
   privateLayoutNovoRegistroIndexRoute: privateLayoutNovoRegistroIndexRoute,
   privateLayoutContaIdIndexRoute: privateLayoutContaIdIndexRoute,
 }
