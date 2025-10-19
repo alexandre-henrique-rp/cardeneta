@@ -3,10 +3,6 @@ import type { ReactNode } from 'react'
 import { ApiService } from '../../api/service'
 import { toast } from 'sonner'
 import { useNavigate } from '@tanstack/react-router'
-import {
-  registerPushSubscription,
-  isPushNotificationSupported,
-} from '../../services/pushNotification'
 
 export interface User {
   id: string
@@ -105,58 +101,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     )
     setUser(data.user)
     setToken(data.token)
-
-    // Registrar notificações push após login bem-sucedido
-    await setupPushNotifications()
-  }
-
-  /**
-   * Configura as notificações push para o usuário autenticado
-   * Solicita permissão e registra a subscrição no servidor
-   */
-  const setupPushNotifications = async () => {
-    try {
-      // Verificar se o navegador suporta push notifications
-      if (!isPushNotificationSupported()) {
-        console.log('Push notifications não são suportadas neste navegador')
-        return
-      }
-
-      // Obter a chave pública VAPID do servidor
-      const vapidKey = await api.getVapidPublicKey()
-
-      if (!vapidKey) {
-        console.error('Chave VAPID não foi retornada pelo servidor')
-        return
-      }
-
-      // Registrar a subscrição
-      const subscription = await registerPushSubscription(vapidKey)
-
-      if (subscription) {
-        // Enviar a subscrição para o servidor
-        await api.subscribePushNotification(subscription)
-        console.log('✅ Notificações push registradas com sucesso')
-        toast.success('Notificações ativadas com sucesso!')
-      } else {
-        console.warn('Não foi possível criar subscrição de notificações')
-        toast.info('Notificações não foram ativadas')
-      }
-    } catch (error: any) {
-      console.error('❌ Erro ao configurar notificações push:', error)
-      
-      // Mensagem específica baseada no tipo de erro
-      if (error.message?.includes('Service Worker não está ativo')) {
-        toast.error('Erro ao ativar notificações. Recarregue a página e tente novamente.')
-      } else if (error.message?.includes('Chave VAPID inválida')) {
-        toast.error('Erro de configuração do servidor. Contate o suporte.')
-        console.error('⚠️ Problema com a chave VAPID do servidor')
-      } else if (error.message?.includes('permission')) {
-        toast.info('Você negou permissão para notificações')
-      } else {
-        toast.error('Erro ao ativar notificações. Verifique o console para mais detalhes.')
-      }
-    }
   }
 
   const Logout = () => {

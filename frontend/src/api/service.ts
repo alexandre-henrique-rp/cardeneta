@@ -233,7 +233,7 @@ export const ApiService = () => ({
   // Push Notifications
   getVapidPublicKey: async () => {
     try {
-      const response = await BaseApi.get('/push-notification/vapid-public-key')
+      const response = await BaseApi.get('/push-notifications/vapid-public-key')
       return response.data
     } catch (error: any) {
       if (error.response?.data?.message) {
@@ -243,14 +243,14 @@ export const ApiService = () => ({
     }
   },
 
-  subscribePushNotification: async (data: {
+  createSubscription: async (data: {
     endpoint: string
     p256dh: string
     auth: string
     userAgent: string
   }) => {
     try {
-      const response = await BaseApi.post('/push-notification/subscribe', data)
+      const response = await BaseApi.post('/push-notifications/subscriptions', data)
       return response.data
     } catch (error: any) {
       if (error.response?.data?.message) {
@@ -260,11 +260,9 @@ export const ApiService = () => ({
     }
   },
 
-  unsubscribePushNotification: async (endpoint: string) => {
+  deleteSubscription: async (subscriptionId: string) => {
     try {
-      const response = await BaseApi.post('/push-notification/unsubscribe', {
-        endpoint,
-      })
+      const response = await BaseApi.delete(`/push-notifications/subscriptions/${subscriptionId}`)
       return response.data
     } catch (error: any) {
       if (error.response?.data?.message) {
@@ -276,7 +274,7 @@ export const ApiService = () => ({
 
   getUserSubscriptions: async () => {
     try {
-      const response = await BaseApi.get('/push-notification/subscriptions')
+      const response = await BaseApi.get('/push-notifications/subscriptions')
       return response.data
     } catch (error: any) {
       if (error.response?.data?.message) {
@@ -286,13 +284,27 @@ export const ApiService = () => ({
     }
   },
 
-  testPushNotification: async (data?: {
-    title?: string
-    message?: string
-    redirectUrl?: string
+  sendNotification: async (data: {
+    subscriptionId: string
+    title: string
+    body: string
+    data?: object
+    scheduledAt?: string
   }) => {
     try {
-      const response = await BaseApi.post('/push-notification/test', data || {})
+      const response = await BaseApi.post('/push-notifications/send', data)
+      return response.data
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        throw error.response.data.message
+      }
+      throw error
+    }
+  },
+
+  getNotifications: async () => {
+    try {
+      const response = await BaseApi.get('/push-notifications/notifications')
       return response.data
     } catch (error: any) {
       if (error.response?.data?.message) {
