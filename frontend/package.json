@@ -6,10 +6,10 @@
   "author": "Alexandre Henrique da Rocha Araújo",
   "license": "MIT",
   "scripts": {
-    "dev": "vite --port 3001",
-    "start": "npm run build && vite preview --port 3001",
+    "dev": "vite --port 3000",
+    "start": "npm run build && vite preview --port 3000",
     "build": "vite build && tsc",
-    "serve": "vite preview --port 3001",
+    "serve": "vite preview --port 3000",
     "test": "vitest run",
     "format": "biome format",
     "lint": "biome lint",

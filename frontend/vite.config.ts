@@ -51,7 +51,9 @@ export default defineConfig({
       },
       injectManifest: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        globIgnores: ['**/node_modules/**/*', 'sw.js', 'workbox-*.js']
+        globIgnores: ['**/node_modules/**/*', 'sw.js', 'workbox-*.js'],
+        swSrc: 'public/sw.js',
+        swDest: 'dist/sw.js'
       },
       devOptions: {
         enabled: true,
