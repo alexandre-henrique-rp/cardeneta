@@ -1,14 +1,15 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
-import * as express from 'express';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dns from 'dns';
+import * as express from 'express';
+import { AppModule } from './app.module';
 
 // Configurar DNS para preferir IPv4 (resolver problema de timeout com FCM)
 dns.setDefaultResultOrder('ipv4first');
 const Porta = process.env.PORT || 3000;
-const baseURL = `${process.env.URL_BASE_API}:${Porta}` || `http://localhost:${Porta}`;
+const baseURL =
+  `${process.env.URL_BASE_API}:${Porta}` || `http://localhost:${Porta}`;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -36,8 +37,22 @@ async function bootstrap() {
 
   app.enableCors({
     origin: '*',
-    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'Accept',
+      'X-Requested-With',
+      'Origin',
+      'If-None-Match',
+      'Content-Range',
+      'Range',
+      'Accept-Encoding',
+      'Accept-Language',
+      'Access-Control-Request-Headers',
+      'Access-Control-Request-Method',
+    ],
+    credentials: false,
   });
 
   // Configuração para arquivos grandes
@@ -47,12 +62,8 @@ async function bootstrap() {
   await app.listen(Porta, () => {
     console.log(` `);
     console.log(` `);
-    console.log(
-      `\x1b[1m\x1b[34mNest running on ${baseURL}\x1b[0m`,
-    );
-    console.log(
-      `\x1b[4m\x1b[43m\x1b[30mNest running on ${baseURL}/api\x1b[0m`,
-    );
+    console.log(`\x1b[1m\x1b[34mNest running on ${baseURL}\x1b[0m`);
+    console.log(`\x1b[4m\x1b[43m\x1b[30mNest running on ${baseURL}/api\x1b[0m`);
   });
 }
 void bootstrap();
